@@ -1,0 +1,96 @@
+.root {
+    -fx-font-family: 'Arial';
+    -fx-base: #1e4974; /* Blauton aus dem Bild */
+    -fx-background: #ffffff; /* Weißer Hintergrund als Standard */
+}
+
+.background-contrast {
+    -fx-background-color: #1e4974; /* Kontrastierender Hintergrund für bestimmte UI-Elemente */
+}
+
+.label {
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text, um den Kontrast zum weißen Hintergrund zu erhöhen */
+    -fx-font-size: 15px; /* Standardgröße für Text */
+}
+
+.label.h1 {
+    -fx-font-size: 24px; /* Größe für H1 Überschriften */
+    -fx-font-weight: bold; /* H1 fett machen */
+}
+
+.label.h2 {
+    -fx-font-size: 20px; /* Größe für H2 Überschriften */
+    -fx-font-weight: bold; /* H2 fett machen */
+}
+
+.button {
+    -fx-background-color: #1e4974, #16325c; /* Hintergrundfarbe für Buttons */
+    -fx-text-fill: #ffffff; /* Weißer Text für Buttons */
+    -fx-font-size: 15px;
+    -fx-background-insets: 0, 1; /* Innenabstand für Buttons */
+    -fx-background-radius: 3; /* Eckenradius für Buttons */
+    -fx-padding: 5 10; /* Padding für Buttons */
+    -fx-cursor: hand; /* Hand-Cursor beim Hovern über den Button */
+}
+
+.button:hover {
+    -fx-background-color: #16325c, #1e4974; /* Hintergrundfarbe für Buttons beim Hovern */
+}
+
+.button:pressed {
+    -fx-background-color: #122847; /* Dunklere Hintergrundfarbe für Buttons im gedrückten Zustand */
+    -fx-text-fill: #ffffff; /* Weißer Text für Buttons im gedrückten Zustand */
+}
+
+.button.positive {
+    -fx-background-color: #27ae60; /* Anpassung zu einem freundlichen Grünton */
+}
+
+.button.positive:hover {
+    -fx-background-color: #2ecc71; /* Hellerer Grün-Ton für Hover auf positive Buttons */
+}
+
+.button.positive:pressed {
+    -fx-background-color: #229954; /* Dunklerer Grün-Ton für Pressed-Zustand von positiven Buttons */
+}
+
+.button.negative {
+    -fx-background-color: #c0392b; /* Dunklerer Rotton für negative Buttons */
+}
+
+.button.negative:hover {
+    -fx-background-color: #e74c3c; /* Hellerer Rot-Ton für Hover auf negative Buttons */
+}
+
+.button.negative:pressed {
+    -fx-background-color: #a93226; /* Sehr dunkler Rot-Ton für Pressed-Zustand von negativen Buttons */
+}
+
+.button.image-button{
+    -fx-background-color: #ffffff
+}
+
+.button.dashboard-button{
+    -fx-background-color: #1e4974; /* Gleiche Hintergrundfarbe wie background-contrast */
+    -fx-text-fill: #ffffff; /* Weißer Text */
+}
+
+.button.dashboard-button:hover {
+    -fx-background-color: #1f517a; /* Sehr leicht hellerer Blauton beim Hovern */
+}
+
+.button.dashboard-button:pressed {
+    -fx-background-color: #226088; /* Leicht hellerer Blauton beim Drücken */
+}
+
+.text-field {
+    -fx-background-color: #e7e7e7; /* Hellgrauer Hintergrund für Textfelder */
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text für Textfelder */
+    -fx-font-size: 15px;
+}
+
+.password-field {
+    -fx-background-color: #e7e7e7; /* Hellgrauer Hintergrund für Passwortfelder */
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text für Passwortfelder */
+    -fx-font-size: 15px;
+}

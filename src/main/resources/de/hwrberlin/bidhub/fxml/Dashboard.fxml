@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1440.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.DashboardController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background-contrast" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1190.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="810.0" prefWidth="250.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/BidHub_Icon.png" />
+                     </image>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </ImageView>
+                  <Label prefHeight="27.0" style="-fx-text-fill: ffffff;" styleClass="h1" text="BidHub" />
+                  <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="-Infinity" prefWidth="100.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Auktion erstellen" />
+                        <Button alignment="CENTER" layoutX="10.0" layoutY="190.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Auktion beitreten" />
+                        <Separator focusTraversable="false" prefWidth="200.0" />
+                        <Button alignment="CENTER" layoutX="10.0" layoutY="215.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Käufe" />
+                        <Button alignment="CENTER" layoutX="10.0" layoutY="240.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Verkäufe" />
+                     </children>
+                  </VBox>
+                  <Separator focusTraversable="false" orientation="VERTICAL" prefHeight="150.0" visible="false" />
+               </children>
+               <padding>
+                  <Insets bottom="25.0" top="25.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <HBox alignment="CENTER" layoutX="250.0" prefHeight="70.0" spacing="25.0" AnchorPane.bottomAnchor="740.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Separator focusTraversable="false" visible="false" HBox.hgrow="ALWAYS" />
+            <Label prefHeight="27.0" styleClass="h1" text="Dashboard" HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_RIGHT" minWidth="-Infinity" prefHeight="70.0" prefWidth="0.0" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="fxProfile" layoutX="507.0" layoutY="25.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/user.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button fx:id="fxLogout" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" styleClass="image-button">
+                     <graphic>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/logout.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="250.0" layoutY="740.0" prefHeight="70.0" prefWidth="1190.0" spacing="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="775.0">
+         <children>
+            <Label prefHeight="15.0" text="BidHub - Projektabgabe für das Modul Client Server Programmierung" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
