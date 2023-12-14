@@ -1,4 +1,4 @@
-package de.hwrberlin.bidhub.bidhub;
+package de.hwrberlin.bidhub;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
