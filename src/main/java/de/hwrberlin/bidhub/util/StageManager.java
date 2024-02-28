@@ -75,7 +75,7 @@ public abstract class StageManager {
     public static void createStage(FxmlFile startingScene, String stageTitle) {
         Stage stage = new Stage();
         setScene(stage, startingScene);
-        stage.setTitle(stageTitle);
+        stage.setTitle("BidHub - " + stageTitle);
         stage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
 
         mainStage.close();

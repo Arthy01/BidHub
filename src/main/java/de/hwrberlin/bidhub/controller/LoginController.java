@@ -2,14 +2,9 @@ package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.RMIInfo;
-import de.hwrberlin.bidhub.model.client.Client;
-import de.hwrberlin.bidhub.model.client.TestClient;
-import de.hwrberlin.bidhub.model.shared.IAuthenticator;
-import de.hwrberlin.bidhub.model.shared.IClient;
-import de.hwrberlin.bidhub.model.shared.LoginInfo;
+import de.hwrberlin.bidhub.model.shared.ILoginHandler;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +17,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -42,7 +36,7 @@ public class LoginController implements Initializable {
     @FXML
     private Button fxLogin;
 
-    private IAuthenticator authenticator;
+    private ILoginHandler remoteLoginHandler;
 
     /**
      * Initialization method. Sets up the action handlers for the login button and password field.
@@ -53,7 +47,8 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             locateServices();
-        } catch (RemoteException | NotBoundException e){
+        }
+        catch (RemoteException | NotBoundException e){
             e.printStackTrace();
             return;
         }
@@ -64,9 +59,7 @@ public class LoginController implements Initializable {
 
     private void locateServices() throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(RMIInfo.getHost(), RMIInfo.getPort());
-        authenticator = (IAuthenticator) registry.lookup("AuthenticationService");
-        System.out.println("Service");
-        System.out.println(authenticator);
+        remoteLoginHandler = (ILoginHandler) registry.lookup("LoginService");
     }
 
     /**
@@ -75,33 +68,31 @@ public class LoginController implements Initializable {
      * Otherwise, displays an error message.
      */
     private void onLoginButtonPressed(ActionEvent event) {
-/*
-        ClientApplication.executor.submit(() ->{
+
+        ClientApplication.executor.submit(() -> {
             try {
-                ClientApplication.createClient(fxUsername.getText());
-                System.out.println("press");
-                System.out.println("Ping: " + authenticator.debug_ping((IClient) ClientApplication.getClient()));
-                boolean isAuthenticated = authenticator.authenticate(new LoginInfo(ClientApplication.getClient(), fxUsername.getText(), fxPassword.getText()));
-                System.out.println(isAuthenticated);
-                if (isAuthenticated){
-                    System.out.println("Suc");
+                boolean isLoginCorrect = remoteLoginHandler.onRequestLogin(fxUsername.getText(), fxPassword.getText());
+                if (isLoginCorrect){
                     Platform.runLater(this::onSuccessfulLogin); // Auf dem Main Thread aufrufen
                 }
                 else {
-                    System.out.println("Fl");
                     Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
             }
-        });*/
+            catch (RemoteException e) {
+                Platform.runLater(() -> {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                });
+            }
+        });
+
+        /*
         try {
-            ClientApplication.createClient(fxUsername.getText());
+            Client client = ClientApplication.createClient(fxUsername.getText());
             System.out.println("press");
-            TestClient tc = new TestClient();
-            System.out.println("Ping: " + authenticator.debug_ping("(IClient) tc"));
-            boolean isAuthenticated = authenticator.authenticate(new LoginInfo(tc, fxUsername.getText(), fxPassword.getText()));
+
+            boolean isAuthenticated = authenticator.authenticate(new LoginInfo(client, fxUsername.getText(), fxPassword.getText()));
             System.out.println(isAuthenticated);
             if (isAuthenticated){
                 System.out.println("Suc");
@@ -115,6 +106,7 @@ public class LoginController implements Initializable {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+        */
     }
 
     /**
@@ -134,11 +126,10 @@ public class LoginController implements Initializable {
      */
     private void onSuccessfulLogin() {
         System.out.println("Success!");
-        StageManager.createStage(FxmlFile.Dashboard, "");
+        StageManager.createStage(FxmlFile.Dashboard, "Dashboard");
     }
 
     private void onFailedLogin(){
-        ClientApplication.deleteClient();
         System.out.println("Fail!");
     }
 }
