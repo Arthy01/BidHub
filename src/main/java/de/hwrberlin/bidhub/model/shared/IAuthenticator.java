@@ -7,4 +7,5 @@ import java.rmi.RemoteException;
 
 public interface IAuthenticator extends Remote {
     boolean authenticate(LoginInfo info) throws RemoteException;
+    boolean debug_ping(String user) throws RemoteException;
 }

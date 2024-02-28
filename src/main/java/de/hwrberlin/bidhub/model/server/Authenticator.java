@@ -18,9 +18,20 @@ public class Authenticator extends UnicastRemoteObject implements IAuthenticator
     public boolean authenticate(LoginInfo info) throws RemoteException {
         System.out.println("Get request");
         if (!info.getUsername().isBlank() && !info.getPassword().isBlank()){
-            info.getClient().onAuthenticated(UUID.randomUUID().toString());
+            System.out.println("Request successful!");
+            System.out.println("Client: " + info.getClient());
+            //info.getClient().onAuthenticated(UUID.randomUUID().toString());
             return true;
         }
+        System.out.println("Request failed!");
         return false;
     }
+
+    @Override
+    public boolean debug_ping(String user) throws RemoteException{
+        System.out.println("Ping for: " + user);
+        return true;
+    }
+
+
 }
