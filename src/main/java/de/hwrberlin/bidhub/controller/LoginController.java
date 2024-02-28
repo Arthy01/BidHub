@@ -3,7 +3,9 @@ package de.hwrberlin.bidhub.controller;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.RMIInfo;
 import de.hwrberlin.bidhub.model.client.Client;
+import de.hwrberlin.bidhub.model.client.TestClient;
 import de.hwrberlin.bidhub.model.shared.IAuthenticator;
+import de.hwrberlin.bidhub.model.shared.IClient;
 import de.hwrberlin.bidhub.model.shared.LoginInfo;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
@@ -20,6 +22,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -48,8 +51,6 @@ public class LoginController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Init");
-
         try {
             locateServices();
         } catch (RemoteException | NotBoundException e){
@@ -64,6 +65,8 @@ public class LoginController implements Initializable {
     private void locateServices() throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(RMIInfo.getHost(), RMIInfo.getPort());
         authenticator = (IAuthenticator) registry.lookup("AuthenticationService");
+        System.out.println("Service");
+        System.out.println(authenticator);
     }
 
     /**
@@ -72,20 +75,46 @@ public class LoginController implements Initializable {
      * Otherwise, displays an error message.
      */
     private void onLoginButtonPressed(ActionEvent event) {
+/*
         ClientApplication.executor.submit(() ->{
             try {
                 ClientApplication.createClient(fxUsername.getText());
-                if (authenticator.authenticate(new LoginInfo(ClientApplication.getClient(), fxUsername.getText(), fxPassword.getText()))){
+                System.out.println("press");
+                System.out.println("Ping: " + authenticator.debug_ping((IClient) ClientApplication.getClient()));
+                boolean isAuthenticated = authenticator.authenticate(new LoginInfo(ClientApplication.getClient(), fxUsername.getText(), fxPassword.getText()));
+                System.out.println(isAuthenticated);
+                if (isAuthenticated){
+                    System.out.println("Suc");
                     Platform.runLater(this::onSuccessfulLogin); // Auf dem Main Thread aufrufen
                 }
                 else {
+                    System.out.println("Fl");
                     Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-        });
+        });*/
+        try {
+            ClientApplication.createClient(fxUsername.getText());
+            System.out.println("press");
+            TestClient tc = new TestClient();
+            System.out.println("Ping: " + authenticator.debug_ping("(IClient) tc"));
+            boolean isAuthenticated = authenticator.authenticate(new LoginInfo(tc, fxUsername.getText(), fxPassword.getText()));
+            System.out.println(isAuthenticated);
+            if (isAuthenticated){
+                System.out.println("Suc");
+                Platform.runLater(this::onSuccessfulLogin); // Auf dem Main Thread aufrufen
+            }
+            else {
+                System.out.println("Fl");
+                Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
