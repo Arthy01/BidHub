@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+
+
+<Label fx:id="fxMessage" stylesheets="@../css/main.css" text="{message}" wrapText="true" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.ChatMessageController" />

@@ -2,7 +2,8 @@ package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.RMIInfo;
-import de.hwrberlin.bidhub.model.shared.ILoginHandler;
+import de.hwrberlin.bidhub.model.client.LoginHandler;
+import de.hwrberlin.bidhub.model.shared.ILoginService;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
 import javafx.application.Platform;
@@ -23,9 +24,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ResourceBundle;
 
-/**
- * Controller class for the login screen of the application.
- */
 public class LoginController implements Initializable {
     @FXML
     private TextField fxUsername;
@@ -36,84 +34,25 @@ public class LoginController implements Initializable {
     @FXML
     private Button fxLogin;
 
-    private ILoginHandler remoteLoginHandler;
+    private LoginHandler loginHandler;
 
-    /**
-     * Initialization method. Sets up the action handlers for the login button and password field.
-     * @param url The location used to resolve relative paths for the root object.
-     * @param resourceBundle The resources used to localize the root object.
-     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            locateServices();
+            loginHandler = new LoginHandler();
         }
-        catch (RemoteException | NotBoundException e){
-            e.printStackTrace();
-            return;
+        catch (NotBoundException | RemoteException e) {
+            System.out.println("CANT CREATE LOGIN HANDLER!");
         }
 
         fxLogin.setOnAction(this::onLoginButtonPressed);
         fxPassword.setOnKeyPressed(this::onPasswordKeyPressed);
     }
 
-    private void locateServices() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(RMIInfo.getHost(), RMIInfo.getPort());
-        remoteLoginHandler = (ILoginHandler) registry.lookup("LoginService");
-    }
-
-    /**
-     * Handles the login button press event.
-     * If the provided username and password match an existing user, proceeds to the main panel.
-     * Otherwise, displays an error message.
-     */
     private void onLoginButtonPressed(ActionEvent event) {
-
-        ClientApplication.executor.submit(() -> {
-            try {
-                boolean isLoginCorrect = remoteLoginHandler.onRequestLogin(fxUsername.getText(), fxPassword.getText());
-                if (isLoginCorrect){
-                    Platform.runLater(this::onSuccessfulLogin); // Auf dem Main Thread aufrufen
-                }
-                else {
-                    Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
-                }
-            }
-            catch (RemoteException e) {
-                Platform.runLater(() -> {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                });
-            }
-        });
-
-        /*
-        try {
-            Client client = ClientApplication.createClient(fxUsername.getText());
-            System.out.println("press");
-
-            boolean isAuthenticated = authenticator.authenticate(new LoginInfo(client, fxUsername.getText(), fxPassword.getText()));
-            System.out.println(isAuthenticated);
-            if (isAuthenticated){
-                System.out.println("Suc");
-                Platform.runLater(this::onSuccessfulLogin); // Auf dem Main Thread aufrufen
-            }
-            else {
-                System.out.println("Fl");
-                Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-        */
+        loginHandler.login(fxUsername.getText(), fxPassword.getText());
     }
 
-    /**
-     * Handles the password field key press event.
-     * If the Enter key is pressed, triggers the login button press event.
-     * @param keyEvent The KeyEvent object representing the key that was pressed.
-     */
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER) {
@@ -121,15 +60,4 @@ public class LoginController implements Initializable {
         }
     }
 
-    /**
-     * Transitions to the main panel of the application.
-     */
-    private void onSuccessfulLogin() {
-        System.out.println("Success!");
-        StageManager.createStage(FxmlFile.Dashboard, "Dashboard");
-    }
-
-    private void onFailedLogin(){
-        System.out.println("Fail!");
-    }
 }

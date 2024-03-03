@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minHeight="-Infinity" spacing="10.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.AuctionRoomPreviewController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="h3" text="ID:" wrapText="true" />
+            <Label fx:id="fxId" text="{id}" wrapText="true" />
+         </children>
+      </HBox>
+      <HBox spacing="5.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="h3" text="Titel:" wrapText="true" />
+            <Label fx:id="fxTitle" text="{title}" wrapText="true" />
+         </children>
+      </HBox>
+      <HBox spacing="5.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="h3" text="Beschreibung:" wrapText="true" />
+            <Label fx:id="fxDescription" text="{description}" wrapText="true" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="5.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" minWidth="-Infinity" styleClass="h3" text="Benutzeranzahl:" wrapText="true" />
+            <Label fx:id="fxClientCount" maxWidth="1.7976931348623157E308" text="{clientcount}" wrapText="true" />
+         </children>
+      </HBox>
+      <Button fx:id="fxJoinRoom" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Raum beitreten">
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
+      </Button>
+      <Separator VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets bottom="15.0" />
+         </VBox.margin></Separator>
+   </children>
+</VBox>

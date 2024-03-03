@@ -2,5 +2,11 @@ package de.hwrberlin.bidhub.util;
 
 public enum FxmlFile {
     Login,
-    Dashboard
+    Dashboard,
+    AuctionRoom,
+    ChatMessage,
+    Overview,
+    JoinAuction,
+    AuctionRoomPreview,
+    CreateAuction
 }

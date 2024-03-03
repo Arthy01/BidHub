@@ -1,7 +1,6 @@
 import os
 import subprocess
 import shutil
-import sys
 
 def compile_java_files(src_path, output_dir, main_class, javafx_path=None):
     # Erstelle das Ausgabeverzeichnis, falls es nicht existiert
@@ -89,16 +88,61 @@ def copy_directory(src, dest):
         print(f"Fehler beim Kopieren des Verzeichnisses: {e}")
 
 if __name__ == "__main__":
+    try:
+        mode = int(input("Modes:\n[1] Build Only\n[2] Build and upload\n[3] Build, upload and start server\n\nMode > "))
+    except:
+        print("Invalid input!")
+        input("Press enter to exit")
+        exit()
+
+    if (mode not in range(1, 4)):
+        print("Invalid mode!")
+        input("Press enter to exit")
+        exit()
+
     script_directory = os.path.dirname(os.path.realpath(__file__))
     src_directory = os.path.join(script_directory, "src")
     resources_directory = os.path.join(src_directory, "main", "resources", "de", "hwrberlin", "bidhub")
 
-    # Pfad zum JavaFX 'lib' Ordner (falls benötigt)
-    javafx_lib_path = "C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19\\lib"
+    try:
+        device = int(input("Devices:\n[1] Home PC\n[2] Surface\n\nDevice > "))
+    except:
+        print("Invalid input!")
+        input("Press enter to exit")
+        exit()
+
+    if (device not in range(1, 3)):
+        print("Invalid device!")
+        input("Press enter to exit")
+        exit()
+
+    # Pfad zum JavaFX 'lib' Ordner
+    javafx_lib_path_homepc = "C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19\\lib"
+    javafx_lib_path_surface = "C:\\Users\\phili\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19\\lib"
+
+    javafx_base_path_homepc = "C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19"
+    javafx_base_path_surface = "C:\\Users\\phili\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19"
+
+    if (device == 1):
+        javafx_lib_path = javafx_lib_path_homepc
+        javafx_base_path = javafx_base_path_homepc
+    else:
+        javafx_lib_path = javafx_lib_path_surface
+        javafx_base_path = javafx_base_path_surface
 
     # Setze die erforderlichen Pfade und Ausschlüsse
     client_output = os.path.join(script_directory, "out_client")
     server_output = os.path.join(script_directory, "out_server")
+
+    # Lösche den Ordner out_client
+    if os.path.exists(client_output):
+        shutil.rmtree(client_output)
+        print(f"Ordner {client_output} wurde gelöscht.")
+
+    # Lösche den Ordner out_server
+    if os.path.exists(server_output):
+        shutil.rmtree(server_output)
+        print(f"Ordner {server_output} wurde gelöscht.")
 
     # Kompiliere und erstelle Ausführungsbefehle für Client und Server
     compile_java_files(src_directory, client_output, "de.hwrberlin.bidhub.ClientApplication", javafx_lib_path)
@@ -109,12 +153,34 @@ if __name__ == "__main__":
     copy_resources(resources_directory, server_output)
 
     #JavaFX installation kopieren
-    copy_directory("C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19", os.path.join(client_output, "lib\\javafx"))
-    copy_directory("C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19", os.path.join(server_output, "lib\\javafx"))
+    copy_directory(javafx_base_path, os.path.join(client_output, "lib\\javafx"))
 
     # JAR erstellen
     create_jar(client_output, "Bidhub - Client.jar", "de.hwrberlin.bidhub.ClientApplication")
     create_jar(server_output, "Bidhub - Server.jar", "de.hwrberlin.bidhub.ServerApplication")
 
+    # Inhalt der .bat-Datei
+    bat_content = 'java --module-path "lib\\javafx\\lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -jar "Bidhub - Client.jar"'
+
+    # Vollständiger Pfad zur .bat-Datei
+    bat_file_path = f"{client_output}\\start_bidhub_client.bat"
+
+    # .bat-Datei erstellen und schreiben
+    with open(bat_file_path, "w") as bat_file:
+        bat_file.write(bat_content)
+
+    print(f".bat-Datei erstellt unter: {bat_file_path}")
+
+    if (mode == 2 or mode == 3):
+        import upload
+        upload.upload_server(device)
+    
+    if (mode == 3):
+        import start
+        start.start_server(device)
+
+    print("Excecution finished!")
+        
+
 # START COMMAND CLIENT: java --module-path "lib\javafx\lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -jar "Bidhub - Client.jar"
-# START COMMAND SERVER: java --module-path "lib\javafx\lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -jar "Bidhub - Server.jar"
+# START COMMAND SERVER: java -jar "Bidhub - Server.jar"

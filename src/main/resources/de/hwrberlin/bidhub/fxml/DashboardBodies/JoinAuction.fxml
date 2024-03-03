@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox minHeight="-Infinity" minWidth="-Infinity" spacing="25.0" stylesheets="@../../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.JoinAuctionController">
+   <children>
+      <Label styleClass="h2" text="Öffentliche Auktionen" />
+      <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="fxScrollPaneContent">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label styleClass="h3" text="Privater Auktion beitreten:" />
+            <TextField fx:id="fxPrivateRoomId" promptText="Auktions-ID z.B.: #123" />
+            <TextField fx:id="fxPrivateRoomPassword" promptText="Passwort" />
+            <Button fx:id="fxJoinPrivateRoom" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefWidth="200.0" text="Auktion beitreten" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

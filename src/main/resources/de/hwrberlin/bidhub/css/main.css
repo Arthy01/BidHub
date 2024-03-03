@@ -13,6 +13,11 @@
     -fx-font-size: 15px; /* Standardgröße für Text */
 }
 
+.chat-message{
+    -fx-fill: #1e4974; /* Dunkelblauer Text, um den Kontrast zum weißen Hintergrund zu erhöhen */
+    -fx-font-size: 15px; /* Standardgröße für Text */
+}
+
 .label.h1 {
     -fx-font-size: 24px; /* Größe für H1 Überschriften */
     -fx-font-weight: bold; /* H1 fett machen */
@@ -21,6 +26,11 @@
 .label.h2 {
     -fx-font-size: 20px; /* Größe für H2 Überschriften */
     -fx-font-weight: bold; /* H2 fett machen */
+}
+
+.label.h3 {
+    -fx-font-size: 16px; /* Größe für H3 Überschriften */
+    -fx-font-weight: bold; /* H3 fett machen */
 }
 
 .button {
@@ -89,8 +99,29 @@
     -fx-font-size: 15px;
 }
 
+.text-area {
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text für Textareas */
+    -fx-font-size: 15px;
+}
+
+.text-area .content{
+    -fx-background-color: #e7e7e7; /* Hellgrauer Hintergrund für Textareas */
+}
+
 .password-field {
     -fx-background-color: #e7e7e7; /* Hellgrauer Hintergrund für Passwortfelder */
     -fx-text-fill: #1e4974; /* Dunkelblauer Text für Passwortfelder */
     -fx-font-size: 15px;
+}
+
+.choice-box {
+    -fx-background-color: #e7e7e7; /* Verwendet den hellgrauen Hintergrund, ähnlich den Textfeldern */
+    -fx-mark-color: #1e4974; /* Dunkelblauer Text/Auswahlzeiger, ähnlich den Textfeldern und Labels */
+    -fx-font-size: 15px; /* Konsistente Schriftgröße */
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text */
+}
+
+.choice-box .list-cell {
+    -fx-text-fill: #1e4974; /* Dunkelblauer Text für die Einträge im Dropdown */
+    -fx-padding: 5px; /* Etwas Padding für die Listeneinträge */
 }

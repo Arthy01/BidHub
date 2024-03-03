@@ -8,6 +8,6 @@ module de.hwrberlin.bidhub {
     opens de.hwrberlin.bidhub.controller to javafx.fxml;
 
     exports de.hwrberlin.bidhub;
-    //exports de.hwrberlin.bidhub.model.client;
+    exports de.hwrberlin.bidhub.model.client;
     exports de.hwrberlin.bidhub.model.shared;
 }

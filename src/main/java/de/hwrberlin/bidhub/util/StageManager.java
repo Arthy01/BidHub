@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,16 +20,18 @@ import java.util.Objects;
 public abstract class StageManager {
     private static final String BIDHUB_ICON = "icons/BidHub_Icon.png";
     private static Stage mainStage;
-    private static final ArrayList<Stage> openPopups = new ArrayList<>();
 
-    public static void initialize(Stage startStage) {
+    public static void initialize(Stage startStage, String title) {
         mainStage = startStage;
 
         mainStage.setOnCloseRequest(ClientApplication::handleCloseRequest);
 
-        setScene(mainStage, FxmlFile.Login);
+        setScene(mainStage, FxmlFile.Login, false);
 
         mainStage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
+
+        setTitle(title);
+
         mainStage.show();
     }
 
@@ -40,12 +43,27 @@ public abstract class StageManager {
      * @param <T> The type of the controller associated with the scene.
      * @return The controller instance associated with the scene.
      */
-    public static <T> T setScene(Stage stage, FxmlFile sceneFxmlFile) {
+    public static <T> T setScene(Stage stage, FxmlFile sceneFxmlFile, boolean resizable) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(FxmlRef.Get(sceneFxmlFile));
             Scene scene = new Scene(fxmlLoader.load());
+
+            double prevWidth = stage.getWidth();
+            double prevHeight = stage.getHeight();
+
             stage.setScene(scene);
-            stage.setResizable(false);
+
+            stage.setResizable(resizable);
+
+            stage.setMinHeight(scene.getRoot().minHeight(-1));
+            stage.setMinWidth(scene.getRoot().minWidth(-1));
+
+            if (prevWidth >= scene.getRoot().minWidth(-1))
+                stage.setWidth(prevWidth);
+
+            if (prevHeight >= scene.getRoot().minHeight(-1))
+                stage.setHeight(prevHeight);
+
             return fxmlLoader.getController();
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,18 +71,10 @@ public abstract class StageManager {
         }
     }
 
-
-    /**
-     * Closes all open popups.
-     */
-    public static void closeAllPopups() {
-        Platform.runLater(() -> {
-            for (Stage popup : openPopups) {
-                popup.close();
-            }
-            openPopups.clear();
-        });
+    public static <T> T setScene(FxmlFile sceneFxmlFile, boolean resizable) {
+        return setScene(mainStage, sceneFxmlFile, resizable);
     }
+
 
     /**
      * Creates a new stage with the specified scene and title, closing the main stage.
@@ -72,18 +82,25 @@ public abstract class StageManager {
      * @param startingScene The FxmlFile enum representing the starting scene for the new stage.
      * @param stageTitle The title of the new stage.
      */
-    public static void createStage(FxmlFile startingScene, String stageTitle) {
+    public static void createStage(FxmlFile startingScene, String stageTitle, boolean resizable, boolean isPopup) {
         Stage stage = new Stage();
-        setScene(stage, startingScene);
+
+        setScene(stage, startingScene, resizable);
+
         stage.setTitle("BidHub - " + stageTitle);
         stage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
 
-        mainStage.close();
-
-        mainStage = stage;
-
-        mainStage.setOnCloseRequest(ClientApplication::handleCloseRequest);
-        mainStage.show();
+        if (isPopup){
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(mainStage);
+            stage.showAndWait();
+        }
+        else{
+            mainStage.close();
+            mainStage = stage;
+            mainStage.setOnCloseRequest(ClientApplication::handleCloseRequest);
+            mainStage.show();
+        }
     }
 
     /**

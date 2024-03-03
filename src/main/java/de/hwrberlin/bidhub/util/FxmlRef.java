@@ -1,5 +1,9 @@
 package de.hwrberlin.bidhub.util;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -12,6 +16,12 @@ public abstract class FxmlRef {
         {
             put(FxmlFile.Login, "fxml/Login.fxml");
             put(FxmlFile.Dashboard, "fxml/Dashboard.fxml");
+            put(FxmlFile.AuctionRoom, "fxml/AuctionRoom.fxml");
+            put(FxmlFile.ChatMessage, "fxml/ChatMessage.fxml");
+            put(FxmlFile.Overview, "fxml/DashboardBodies/Overview.fxml");
+            put(FxmlFile.JoinAuction, "fxml/DashboardBodies/JoinAuction.fxml");
+            put(FxmlFile.AuctionRoomPreview, "fxml/AuctionRoomPreview.fxml");
+            put(FxmlFile.CreateAuction, "fxml/DashboardBodies/CreateAuction.fxml");
         }
     };
 
@@ -23,5 +33,18 @@ public abstract class FxmlRef {
      */
     public static URL Get(FxmlFile fxml) {
         return Resources.getURL(paths.get(fxml));
+    }
+
+    public static <T> Pair<Node, T> GetInstance(FxmlFile fxml) {
+        FXMLLoader loader = new FXMLLoader(Get(fxml));
+        try {
+            Node node = loader.load();
+            T controller = loader.getController();
+            return new Pair<>(node, controller);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
