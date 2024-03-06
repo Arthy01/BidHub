@@ -22,7 +22,7 @@ public class AuctionRoomService extends UnicastRemoteObject implements IAuctionR
     private final HashMap<IAuctionRoomClient, AuctionRoomClientData> clients = new HashMap<>();
     private final Registry registry;
     private volatile boolean running = true;
-    private AuctionRoomInfo info;
+    private final AuctionRoomInfo info;
     private final ArrayList<Runnable> closeRoomHooks = new ArrayList<>();
 
     protected AuctionRoomService(Registry registry, AuctionRoomInfo info) throws RemoteException {
@@ -78,7 +78,7 @@ public class AuctionRoomService extends UnicastRemoteObject implements IAuctionR
         clients.put(client, clientData);
         invokeClientStateChange();
         sendSystemMessage(clientData.username() + " ist der Auktion beigetreten.");
-        info.setCurrentClients(info.getCurrentClients() + 1);
+        info.addClient(clientData.username(), clientData.isInitiator());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class AuctionRoomService extends UnicastRemoteObject implements IAuctionR
         clients.remove(client);
         invokeClientStateChange();
         sendSystemMessage(clientData.username() + " hat die Auktion verlassen.");
-        info.setCurrentClients(info.getCurrentClients() - 1);
+        info.removeClient(clientData.username());
     }
 
     private void invokeClientStateChange(){

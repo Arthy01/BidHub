@@ -1,22 +1,32 @@
 package de.hwrberlin.bidhub.model.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AuctionRoomInfo implements Serializable {
     private String id;
     private String title;
     private String description;
-    private int currentClients;
     private String password;
+    private final HashMap<String, Boolean> clients = new HashMap<>();
 
     public AuctionRoomInfo(String id, String title, String description, String password) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.password = password;
-        this.currentClients = 0;
     }
 
+    public void addClient(String username, Boolean isInitiator){
+        clients.put(username, isInitiator);
+    }
+    public void removeClient(String username){
+        clients.remove(username);
+    }
+    public HashMap<String, Boolean> getClients(){
+        return clients;
+    }
     public String getId() {
         return id;
     }
@@ -44,11 +54,7 @@ public class AuctionRoomInfo implements Serializable {
     }
 
     public int getCurrentClients() {
-        return currentClients;
-    }
-
-    public void setCurrentClients(int currentClients) {
-        this.currentClients = currentClients;
+        return clients.size();
     }
 
     public String getPassword() {

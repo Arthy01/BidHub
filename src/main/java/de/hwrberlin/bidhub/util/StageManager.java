@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Abstract class managing stages and popups in the application.
@@ -82,7 +83,7 @@ public abstract class StageManager {
      * @param startingScene The FxmlFile enum representing the starting scene for the new stage.
      * @param stageTitle The title of the new stage.
      */
-    public static void createStage(FxmlFile startingScene, String stageTitle, boolean resizable, boolean isPopup) {
+    public static void createStage(FxmlFile startingScene, String stageTitle, boolean resizable) {
         Stage stage = new Stage();
 
         setScene(stage, startingScene, resizable);
@@ -90,17 +91,25 @@ public abstract class StageManager {
         stage.setTitle("BidHub - " + stageTitle);
         stage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
 
-        if (isPopup){
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(mainStage);
-            stage.showAndWait();
-        }
-        else{
-            mainStage.close();
-            mainStage = stage;
-            mainStage.setOnCloseRequest(ClientApplication::handleCloseRequest);
-            mainStage.show();
-        }
+        mainStage.close();
+        mainStage = stage;
+        mainStage.setOnCloseRequest(ClientApplication::handleCloseRequest);
+        mainStage.show();
+    }
+
+    public static <T> T createPopup(FxmlFile scene, String title){
+        Stage stage = new Stage();
+
+        T controller = setScene(stage, scene, false);
+
+        stage.setTitle("[Popup] BidHub - " + title);
+        stage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(mainStage);
+        stage.showAndWait();
+
+        return controller;
     }
 
     /**
@@ -111,5 +120,4 @@ public abstract class StageManager {
     public static void setTitle(String title) {
         mainStage.setTitle("BidHub - " + title);
     }
-
 }

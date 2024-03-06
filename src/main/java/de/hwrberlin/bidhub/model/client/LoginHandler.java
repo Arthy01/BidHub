@@ -47,7 +47,7 @@ public class LoginHandler {
     private void onSuccessfulLogin(String username) {
         System.out.println("Success!");
         ClientApplication.setApplicationClient(new ApplicationClient(username));
-        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true, false);
+        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
     }
 
     private void onFailedLogin(){

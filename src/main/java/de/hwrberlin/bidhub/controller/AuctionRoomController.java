@@ -58,6 +58,8 @@ public class AuctionRoomController {
     private ScrollPane fxChatScrollPane;
     @FXML
     private Label fxRoomTitle;
+    @FXML
+    private Button fxRoomInfo;
 
     private AuctionRoomHandler auctionRoomHandler;
 
@@ -84,6 +86,7 @@ public class AuctionRoomController {
 
     private void setupShared(){
         fxProfile.setTooltip(new Tooltip("Profil"));
+        fxRoomInfo.setTooltip(new Tooltip("Raum Informationen"));
         fxLeaveRoom.setOnAction(this::onLeaveRoomButtonPressed);
 
         fxChatInput.setOnKeyPressed(this::onChatInputKeyPressed);

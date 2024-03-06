@@ -119,7 +119,7 @@ public class ClientApplication extends Application {
         }
         closeRequestHooks.clear();
 
-        StageManager.createStage(FxmlFile.Login, "Login", false, false);
+        StageManager.createStage(FxmlFile.Login, "Login", false);
         applicationClient = null;
     }
 

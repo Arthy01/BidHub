@@ -28,7 +28,7 @@ public class AuctionRoomManagerService extends UnicastRemoteObject implements IA
 
         AuctionRoomInfo info = new AuctionRoomInfo(roomId, title, description, password);
 
-        AuctionRoomService room = new AuctionRoomService(registry,info);
+        AuctionRoomService room = new AuctionRoomService(registry, info);
         registry.rebind(roomId, room);
 
         synchronized (rooms) { rooms.put(roomId, new Pair<>(room, info)); }
@@ -50,7 +50,6 @@ public class AuctionRoomManagerService extends UnicastRemoteObject implements IA
                 if (!info.getPassword().isEmpty())
                     continue;
 
-                info.setCurrentClients(pair.getKey().getClientCount());
                 infos.add(info);
             }
 
