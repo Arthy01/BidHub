@@ -1,7 +1,6 @@
 package de.hwrberlin.bidhub.model.shared;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AuctionRoomInfo implements Serializable {

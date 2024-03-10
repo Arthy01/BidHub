@@ -1,24 +1,14 @@
 package de.hwrberlin.bidhub.controller;
 
-import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.model.client.AuctionRoomHandler;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
-import de.hwrberlin.bidhub.model.shared.IAuctionRoomClient;
-import de.hwrberlin.bidhub.model.shared.IAuctionRoomService;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 
 public class AuctionRoomController {
@@ -61,18 +51,7 @@ public class AuctionRoomController {
     @FXML
     private Button fxRoomInfo;
 
-    private AuctionRoomHandler auctionRoomHandler;
-
-    public void initialize(IAuctionRoomService auctionRoomService, boolean isInitiator) {
-        try {
-            auctionRoomHandler = new AuctionRoomHandler(auctionRoomService, isInitiator, fxChatParent, fxChatScrollPane, this::updateClientInfos);
-        }
-        catch (RemoteException e){
-            ClientApplication.logout();
-            e.printStackTrace();
-            return;
-        }
-
+    public void initialize(boolean isInitiator) {
         if (isInitiator){
             setupForInitiator();
         }
@@ -114,7 +93,6 @@ public class AuctionRoomController {
     private void onChatInputKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER && !fxChatInput.getText().isBlank()) {
-            auctionRoomHandler.sendMessage(fxChatInput.getText().strip());
             fxChatInput.setText("");
         }
     }
@@ -127,7 +105,7 @@ public class AuctionRoomController {
     }
 
     private void updateRoomInfo(){
-        AuctionRoomInfo info = auctionRoomHandler.getRoomInfo();
+        AuctionRoomInfo info = null; // Todo get auction room info
 
         if (info == null)
             return;
@@ -142,7 +120,7 @@ public class AuctionRoomController {
     }
 
     private void updateClientInfos(){
-        AuctionRoomInfo info = auctionRoomHandler.getRoomInfo();
+        AuctionRoomInfo info = null; // Todo get auction room info
 
         if (info == null)
             return;
@@ -155,6 +133,6 @@ public class AuctionRoomController {
     }
 
     private void onLeaveRoomButtonPressed(ActionEvent event){
-        auctionRoomHandler.onLeaveRoom();
+
     }
 }
