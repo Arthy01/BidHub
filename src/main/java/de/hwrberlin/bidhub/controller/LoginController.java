@@ -13,10 +13,7 @@ import de.hwrberlin.bidhub.util.WaitForResponse;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -32,6 +29,8 @@ public class LoginController implements Initializable {
     private Label fxErrorMsg;
     @FXML
     private Button fxLogin;
+    @FXML
+    private Hyperlink fxRegister;
 
     private final LoginHandler handler = new LoginHandler();
 
@@ -39,6 +38,7 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fxLogin.setOnAction(this::onLoginButtonPressed);
         fxPassword.setOnKeyPressed(this::onPasswordKeyPressed);
+        fxRegister.setOnAction(this::onRegisterLinkPressed);
     }
 
     private void onLoginButtonPressed(ActionEvent event) {
@@ -56,5 +56,10 @@ public class LoginController implements Initializable {
 
     private void login(){
         StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
+    }
+
+    private void onRegisterLinkPressed(ActionEvent event) {
+        System.out.println("Test");
+        StageManager.createPopup(FxmlFile.Dashboard, "TestPopUp");
     }
 }
