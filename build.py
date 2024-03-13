@@ -23,14 +23,22 @@ def compile_java_files(src_path, output_dir, main_class, javafx_path=None):
     # Kompiliere die gesammelten Java-Dateien
     compile_command = ["javac"]
     if javafx_path:
-        compile_command.extend(["--module-path", javafx_path, "--add-modules", "javafx.controls,javafx.fxml"])
+        compile_command.extend(["--module-path", javafx_path + ";" + 
+                                "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\lib\\Java-WebSocket-1.5.6.jar;" + 
+                                "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\lib\\slf4j-api-2.0.12.jar", 
+                                "--add-modules", "javafx.controls,javafx.fxml"])
+
+    print("\n\n\n" + " ".join(compile_command) + "\n\n\n")
     compile_command.extend(["-d", output_dir] + java_files)
     subprocess.run(compile_command)
 
     # Ausführungsbefehl für die Anwendung
     run_command = ["java", "-cp", "\"" + output_dir + "\""]
     if javafx_path:
-        run_command.extend(["--module-path", "\"" + javafx_path + "\"", "--add-modules", "javafx.controls,javafx.fxml"])
+        run_command.extend(["--module-path", javafx_path + ";" + 
+                                "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\lib\\Java-WebSocket-1.5.6.jar;" + 
+                                "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\lib\\slf4j-api-2.0.12.jar", 
+                                "--add-modules", "javafx.controls,javafx.fxml"])
     run_command.append(main_class)
 
     print(f"Um die {main_class} Anwendung auszuführen, benutze den folgenden Befehl:")
@@ -40,6 +48,13 @@ def copy_resources(src_resources_path, dest_path):
     dest_resources_path = os.path.join(dest_path, "de/hwrberlin/bidhub")
     if os.path.exists(src_resources_path):
         shutil.copytree(src_resources_path, dest_resources_path, dirs_exist_ok=True)
+
+def copy_jar(jar_path, dest_path):
+    try:
+        shutil.copy(jar_path, dest_path)
+        print(f"Datei wurde erfolgreich von {jar_path} nach {dest_path} kopiert.")
+    except Exception as e:
+        print(f"Ein Fehler ist aufgetreten: {e}")
 
 def contains_after_src(path, server_or_client):
     # Zuerst suchen wir nach dem Substring '\src\'
@@ -123,6 +138,12 @@ if __name__ == "__main__":
     javafx_base_path_homepc = "C:\\Users\\Philip\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19"
     javafx_base_path_surface = "C:\\Users\\phili\\OneDrive\\Programming Stuff\\JavaFX-Installation\\javafx-sdk-19"
 
+    client_jar_path_homepc = "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\out\\artifacts\\BidHub_Client\\BidHub_Client.jar"
+    client_jar_path_surface = "C:\\Users\\phili\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\out\\artifacts\\BidHub_Client\\BidHub_Client.jar"
+
+    server_jar_path_homepc = "C:\\Users\\Philip\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\out\\artifacts\\BidHub_Server\\BidHub_Server.jar"
+    server_jar_path_surface = "C:\\Users\\phili\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\out\\artifacts\\BidHub_Server\\BidHub_Server.jar"
+
     if (device == 1):
         javafx_lib_path = javafx_lib_path_homepc
         javafx_base_path = javafx_base_path_homepc
@@ -144,9 +165,19 @@ if __name__ == "__main__":
         shutil.rmtree(server_output)
         print(f"Ordner {server_output} wurde gelöscht.")
 
+    os.makedirs(client_output, exist_ok=True)
+    os.makedirs(server_output, exist_ok=True)
+    
+    if (device == 1):
+        copy_jar(client_jar_path_homepc, client_output)
+        copy_jar(server_jar_path_homepc, server_output)
+    else:
+        copy_jar(client_jar_path_surface, client_output)
+        copy_jar(server_jar_path_surface, server_output)
+
     # Kompiliere und erstelle Ausführungsbefehle für Client und Server
-    compile_java_files(src_directory, client_output, "de.hwrberlin.bidhub.ClientApplication", javafx_lib_path)
-    compile_java_files(src_directory, server_output, "de.hwrberlin.bidhub.ServerApplication", javafx_lib_path)
+    # compile_java_files(src_directory, client_output, "de.hwrberlin.bidhub.ClientApplication", javafx_lib_path)
+    # compile_java_files(src_directory, server_output, "de.hwrberlin.bidhub.ServerApplication", javafx_lib_path)
 
     # Kopiere Ressourcen in das Output-Verzeichnis
     copy_resources(resources_directory, client_output)
@@ -156,11 +187,11 @@ if __name__ == "__main__":
     copy_directory(javafx_base_path, os.path.join(client_output, "lib\\javafx"))
 
     # JAR erstellen
-    create_jar(client_output, "Bidhub - Client.jar", "de.hwrberlin.bidhub.ClientApplication")
-    create_jar(server_output, "Bidhub - Server.jar", "de.hwrberlin.bidhub.ServerApplication")
+    # create_jar(client_output, "Bidhub - Client.jar", "de.hwrberlin.bidhub.ClientApplication")
+    # create_jar(server_output, "Bidhub - Server.jar", "de.hwrberlin.bidhub.ServerApplication")
 
     # Inhalt der .bat-Datei
-    bat_content = 'java --module-path "lib\\javafx\\lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -jar "Bidhub - Client.jar"'
+    bat_content = 'java --module-path "lib\\javafx\\lib" --add-modules javafx.controls,javafx.fxml,javafx.graphics -jar "Bidhub_Client.jar"'
 
     # Vollständiger Pfad zur .bat-Datei
     bat_file_path = f"{client_output}\\start_bidhub_client.bat"

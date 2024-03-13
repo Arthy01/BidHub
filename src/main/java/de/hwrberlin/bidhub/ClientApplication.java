@@ -8,15 +8,13 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ClientApplication extends Application {
-    public static final ExecutorService executor = Executors.newCachedThreadPool();
     private static boolean closedByCloseRequest = false;
     private static final ArrayList<Runnable> closeRequestHooks = new ArrayList<>();
-
+    private static ClientSocketManager clientSocketManager;
     private static ApplicationClient applicationClient;
     public static void addCloseRequestHook(Runnable runnable){
         closeRequestHooks.add(runnable);
@@ -34,10 +32,23 @@ public class ClientApplication extends Application {
     }
 
     public static void main(String[] args) {
+        try {
+            clientSocketManager = new ClientSocketManager(SocketInfo.getConnectionURI());
+            new Thread(() -> clientSocketManager.connect()).start();
+        }
+        catch (URISyntaxException e){
+            System.out.println("Wrong URI!");
+            e.printStackTrace();
+            return;
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(ClientApplication::handleShutdownHook));
 
         launch();
+    }
+
+    public static ClientSocketManager getSocketManager(){
+        return clientSocketManager;
     }
 
     @Override
@@ -57,14 +68,13 @@ public class ClientApplication extends Application {
 
     public static void handleCloseRequest(WindowEvent event) {
         System.out.println("Handle Close Request");
-
         for (Runnable runnable : closeRequestHooks){
             runnable.run();
         }
 
         closeRequestHooks.clear();
 
-        executor.shutdownNow();
+        clientSocketManager.close();
 
         closedByCloseRequest = true;
     }
