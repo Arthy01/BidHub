@@ -6,6 +6,7 @@ module de.hwrberlin.bidhub {
 
     opens de.hwrberlin.bidhub to javafx.fxml;
     opens de.hwrberlin.bidhub.controller to javafx.fxml;
+    opens de.hwrberlin.bidhub.json to com.google.gson;
 
     exports de.hwrberlin.bidhub;
     exports de.hwrberlin.bidhub.model.client;
@@ -13,4 +14,5 @@ module de.hwrberlin.bidhub {
     exports de.hwrberlin.bidhub.util;
     exports de.hwrberlin.bidhub.json;
     exports de.hwrberlin.bidhub.json.dataTypes;
+
 }
