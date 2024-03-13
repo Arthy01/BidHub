@@ -1,34 +1,19 @@
 package de.hwrberlin.bidhub;
 
-import de.hwrberlin.bidhub.model.server.AuctionRoomManagerService;
 import de.hwrberlin.bidhub.model.server.LoginService;
-import de.hwrberlin.bidhub.model.shared.ILoginService;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.net.InetSocketAddress;
 
 public class ServerApplication {
-    public static final int TIMEOUT_TIME = 500;
-
+    private static ServerSocketManager serverSocketManager;
     public static void main(String[] args) {
-        System.setProperty("java.rmi.server.hostname", RMIInfo.getHost());
-        StartServices();
+        serverSocketManager = new ServerSocketManager(new InetSocketAddress(SocketInfo.getHost(), SocketInfo.getPort()));
+        serverSocketManager.start();
+
+        LoginService loginService = new LoginService();
     }
 
-    private static void StartServices() {
-        try {
-            Registry registry = LocateRegistry.createRegistry(RMIInfo.getPort());
-
-            ILoginService loginService = new LoginService();
-            registry.rebind("LoginService", loginService);
-
-            AuctionRoomManagerService auctionRoomManagerService = new AuctionRoomManagerService(registry);
-            registry.rebind("AuctionRoomManagerService", auctionRoomManagerService);
-
-            System.out.println("Server started!");
-        }
-        catch (Exception e){
-            System.err.println(e.getMessage());
-        }
+    public static ServerSocketManager getSocketManager(){
+        return serverSocketManager;
     }
 }

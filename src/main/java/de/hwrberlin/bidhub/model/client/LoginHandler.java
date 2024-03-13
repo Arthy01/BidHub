@@ -1,56 +1,37 @@
 package de.hwrberlin.bidhub.model.client;
 
 import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.RMIInfo;
-import de.hwrberlin.bidhub.model.shared.ILoginService;
-import de.hwrberlin.bidhub.util.FxmlFile;
-import de.hwrberlin.bidhub.util.StageManager;
-import javafx.application.Platform;
-
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import de.hwrberlin.bidhub.json.JsonMessage;
+import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
+import de.hwrberlin.bidhub.json.dataTypes.LoginResponseData;
+import de.hwrberlin.bidhub.model.shared.CallbackType;
+import de.hwrberlin.bidhub.model.shared.NetworkResponse;
+import de.hwrberlin.bidhub.util.Helpers;
+import de.hwrberlin.bidhub.util.WaitForResponse;
 
 public class LoginHandler {
-    private ILoginService loginService;
+    public boolean validateLogin(String username, String password){
+        if (username.isBlank() || password.isBlank()){
+            return false;
+        }
 
-    public LoginHandler() throws NotBoundException, RemoteException {
-        locateServices();
-    }
+        NetworkResponse response = new NetworkResponse();
+        JsonMessage msg = new JsonMessage(CallbackType.Server_ValidateLogin,
+                new LoginRequestData(username, Helpers.hashPassword(password)), LoginRequestData.class.getName());
+        System.out.println(msg.toJson());
+        ClientApplication.getSocketManager().send(msg, response);
 
-    private void locateServices() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(RMIInfo.getHost(), RMIInfo.getPort());
-        loginService = (ILoginService) registry.lookup("LoginService");
-    }
+        new WaitForResponse(response);
 
-    public void login(String username, String password){
-        ClientApplication.executor.submit(() -> {
-            try {
-                boolean isLoginCorrect = loginService.requestLogin(username, password);
-                if (isLoginCorrect){
-                    Platform.runLater(() -> onSuccessfulLogin(username)); // Auf dem Main Thread aufrufen
-                }
-                else {
-                    Platform.runLater(this::onFailedLogin); // Auf dem Main Thread aufrufen
-                }
-            }
-            catch (RemoteException e) {
-                Platform.runLater(() -> {
-                    ClientApplication.logout();
-                    throw new RuntimeException(e);
-                });
-            }
-        });
-    }
+        LoginResponseData data;
 
-    private void onSuccessfulLogin(String username) {
-        System.out.println("Success!");
-        ClientApplication.setApplicationClient(new ApplicationClient(username));
-        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
-    }
+        try {
+            data = response.getResponse().getData();
+        } catch (Exception e) {
+            System.out.println("Error");
+            return false;
+        }
 
-    private void onFailedLogin(){
-        System.out.println("Fail!");
+        return data.success();
     }
 }

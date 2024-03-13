@@ -1,7 +1,6 @@
 package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.model.client.DashboardHandler;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.FxmlRef;
 import javafx.fxml.FXML;
@@ -14,8 +13,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -35,9 +32,7 @@ public class DashboardController implements Initializable {
     @FXML
     private VBox fxDashboardBody;
 
-    private DashboardHandler dashboardHandler;
-
-    private HashMap<FxmlFile, String> dashboardBodies = new HashMap<>(){{
+    private final HashMap<FxmlFile, String> dashboardBodies = new HashMap<>(){{
         put(FxmlFile.Overview, "Überblick");
         put(FxmlFile.JoinAuction, "Auktion beitreten");
         put(FxmlFile.CreateAuction, "Auktion erstellen");
@@ -45,8 +40,6 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dashboardHandler = new DashboardHandler();
-
         setupTooltips();
         setupButtons();
 

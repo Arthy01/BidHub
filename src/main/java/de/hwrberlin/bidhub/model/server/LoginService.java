@@ -1,26 +1,29 @@
 package de.hwrberlin.bidhub.model.server;
 
-import de.hwrberlin.bidhub.model.shared.ILoginService;
+import de.hwrberlin.bidhub.CallbackContext;
+import de.hwrberlin.bidhub.ServerApplication;
+import de.hwrberlin.bidhub.json.JsonMessage;
+import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
+import de.hwrberlin.bidhub.json.dataTypes.LoginResponseData;
+import de.hwrberlin.bidhub.model.shared.CallbackType;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-
-public class LoginService extends UnicastRemoteObject implements ILoginService {
-
-    public LoginService() throws RemoteException {
-        super();
+public class LoginService {
+    public LoginService(){
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ValidateLogin, this::validateLogin);
+        System.out.println("Login Callbacks registriert!");
     }
 
-    @Override
-    public boolean requestLogin(String username, String passwordHash) throws RemoteException {
-        if (!username.isBlank() && !passwordHash.isBlank()){
-            System.out.println("Login information correct for user: " + username);
-            return true;
+    private void validateLogin(CallbackContext context){
+        LoginRequestData data;
+        try {
+            data = context.message().getData();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-        System.out.println("Login information incorrect for user: " + username);
-        return false;
+        System.out.println("Login for: " + data.username());
+
+        LoginResponseData response = new LoginResponseData(true);
+        context.conn().send(new JsonMessage(CallbackType.Client_Response, response, LoginResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
-
-
 }

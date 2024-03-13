@@ -12,7 +12,7 @@ def start_server(device: int):
         private_key_path = 'C:\\Users\\phili\\OneDrive\\Uni\\Client Server Programmierung\\BidHub\\bidhub_ssh_private_openssh_bidhub_server.ppk'
 
     remote_java_install_directory ='/java/installation/jdk-21.0.2/bin/java'
-    remote_jar_directory = '/bidhub_server/Bidhub - Server.jar'
+    remote_jar_directory = '/bidhub_server/BidHub_Server.jar'
 
     # Erstelle eine SSH-Verbindung
     ssh = paramiko.SSHClient()
@@ -37,7 +37,7 @@ def start_server(device: int):
         print(f"Fehler beim Schließen der bestehenden screen-Sitzung: {e}")
 
     # Starte eine neue screen-Sitzung im Hintergrund und führe den Java-Befehl aus
-    java_command = f'{remote_java_install_directory} -jar "{remote_jar_directory}"'
+    java_command = f'authbind --deep {remote_java_install_directory} -jar "{remote_jar_directory}"'
     screen_command = f'screen -dmS bidhub_server bash -c \'{java_command}; exec bash\''
     try:
         ssh.exec_command(screen_command)
