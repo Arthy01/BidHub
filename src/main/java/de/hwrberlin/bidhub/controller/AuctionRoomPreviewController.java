@@ -1,5 +1,7 @@
 package de.hwrberlin.bidhub.controller;
 
+import de.hwrberlin.bidhub.model.client.AuctionRoomHandler;
+import de.hwrberlin.bidhub.model.client.JoinAuctionHandler;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,12 +19,12 @@ public class AuctionRoomPreviewController{
     @FXML
     private Button fxJoinRoom;
 
-    public void initialize(AuctionRoomInfo info, Runnable onJoinAuctionButtonPressed){
-        fxId.setText(info.getDisplayId());
+    public void initialize(AuctionRoomInfo info){
+        fxId.setText(info.getId());
         fxTitle.setText(info.getTitle());
         fxDescription.setText(info.getDescription());
         fxClientCount.setText(String.valueOf(info.getCurrentClients()));
 
-        fxJoinRoom.setOnAction(e -> onJoinAuctionButtonPressed.run());
+        fxJoinRoom.setOnAction(e -> JoinAuctionHandler.joinAuction(info.getId()));
     }
 }

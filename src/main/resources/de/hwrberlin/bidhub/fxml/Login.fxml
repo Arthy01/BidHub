@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="350.0" maxWidth="600.0" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.LoginController">
+<AnchorPane maxHeight="350.0" maxWidth="600.0" minHeight="350.0" minWidth="600.0" prefHeight="350.0" prefWidth="600.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.LoginController">
     <children>
         <VBox alignment="CENTER" prefHeight="400.0" prefWidth="220.0" spacing="10.0" styleClass="background-contrast" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
@@ -35,8 +35,8 @@
                         <Label text="Passwort" />
                         <PasswordField fx:id="fxPassword" />
                         <Button fx:id="fxLogin" mnemonicParsing="false" prefHeight="30.0" prefWidth="360.0" text="Login" />
-                        <Label fx:id="fxErrorMsg" alignment="CENTER" prefHeight="20.0" prefWidth="360.0" text="Ungültige Anmeldedaten!" textAlignment="CENTER" textFill="#ae0000" visible="false" wrapText="true" />
-                  <Hyperlink fx:id="fxRegister" maxWidth="1.7976931348623157E308" text="Registrieren" textAlignment="CENTER" alignment="CENTER" />
+                        <Label fx:id="fxErrorMsg" alignment="CENTER" prefHeight="20.0" prefWidth="360.0" style="-fx-text-fill: #ae0000;" text="Ungültige Anmeldedaten!" textAlignment="CENTER" textFill="#ae0000" visible="false" wrapText="true" />
+                  <Hyperlink fx:id="fxRegister" alignment="CENTER" maxWidth="1.7976931348623157E308" text="Registrieren" textAlignment="CENTER" />
                     </children>
                 </VBox>
             </children>

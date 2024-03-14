@@ -10,22 +10,24 @@ public class JsonMessage {
 
     private final String messageId;
     private String responseId;
-    private final CallbackType callbackType;
+    private final String callbackType;
     private final String data;
     private final String dataType;
 
-    public JsonMessage(CallbackType callbackType){
+    public JsonMessage(String callbackType){
         messageId = UUID.randomUUID().toString();
         this.callbackType = callbackType;
 
+        responseId = "";
         data = "";
         dataType = "";
     }
 
-    public JsonMessage(CallbackType callbackType, Object data, String dataType){
+    public JsonMessage(String callbackType, Object data, String dataType){
         messageId = UUID.randomUUID().toString();
         this.callbackType = callbackType;
 
+        responseId = "";
         this.data = gson.toJson(data);
         this.dataType = dataType;
     }
@@ -34,7 +36,7 @@ public class JsonMessage {
         return messageId;
     }
 
-    public CallbackType getCallbackType(){
+    public String getCallbackType(){
         return callbackType;
     }
 

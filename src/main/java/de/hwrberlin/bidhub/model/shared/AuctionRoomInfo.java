@@ -29,9 +29,6 @@ public class AuctionRoomInfo implements Serializable {
     public String getId() {
         return id;
     }
-    public String getDisplayId(){
-        return getId().split("_", 2)[1];
-    }
     public void setId(String id) {
         this.id = id;
     }
@@ -60,7 +57,7 @@ public class AuctionRoomInfo implements Serializable {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String hashedPassword) {
+        this.password = hashedPassword;
     }
 }

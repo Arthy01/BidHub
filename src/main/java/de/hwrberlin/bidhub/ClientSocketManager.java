@@ -12,13 +12,13 @@ import java.util.function.Consumer;
 
 public class ClientSocketManager extends WebSocketClient {
     private final HashMap<String, NetworkResponse> responses = new HashMap<>();
-    private final HashMap<CallbackType, Consumer<JsonMessage>> callbacks = new HashMap<>();
+    private final HashMap<String, Consumer<JsonMessage>> callbacks = new HashMap<>();
 
-    public void registerCallback(CallbackType callbackType, Consumer<JsonMessage> callback){
+    public void registerCallback(String callbackType, Consumer<JsonMessage> callback){
         callbacks.put(callbackType, callback);
     }
 
-    public void unregisterCallback(CallbackType callbackType){
+    public void unregisterCallback(String callbackType){
         callbacks.remove(callbackType);
     }
 
@@ -49,7 +49,7 @@ public class ClientSocketManager extends WebSocketClient {
 
         JsonMessage msg = JsonMessage.fromJson(message);
 
-        if (msg.getCallbackType() == CallbackType.Client_Response){
+        if (msg.getCallbackType().equals(CallbackType.Client_Response.name())){
             NetworkResponse response = responses.get(msg.getResponseId());
 
             if (response == null) {
@@ -64,10 +64,9 @@ public class ClientSocketManager extends WebSocketClient {
             Consumer<JsonMessage> callback = callbacks.get(msg.getCallbackType());
 
             if (callback == null){
-                System.out.println("Callback " + msg.getMessageId() + " wurde nicht gefunden! Message verworfen!");
+                System.out.println("Callback " + msg.getCallbackType() + " wurde nicht gefunden! Message verworfen!");
             }
             else{
-                callbacks.remove(msg.getCallbackType());
                 callback.accept(msg);
             }
         }

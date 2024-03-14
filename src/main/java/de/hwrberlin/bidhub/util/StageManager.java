@@ -56,14 +56,17 @@ public abstract class StageManager {
 
             stage.setResizable(resizable);
 
-            stage.setMinHeight(scene.getRoot().minHeight(-1));
-            stage.setMinWidth(scene.getRoot().minWidth(-1));
+            stage.setMinHeight(scene.getRoot().minHeight(-1) + 50);
+            stage.setMinWidth(scene.getRoot().minWidth(-1) + 50);
 
             if (prevWidth >= scene.getRoot().minWidth(-1))
                 stage.setWidth(prevWidth);
 
             if (prevHeight >= scene.getRoot().minHeight(-1))
                 stage.setHeight(prevHeight);
+
+            stage.hide();
+            stage.show();
 
             return fxmlLoader.getController();
         } catch (IOException e) {

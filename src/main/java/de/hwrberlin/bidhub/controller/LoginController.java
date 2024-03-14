@@ -1,15 +1,10 @@
 package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.json.JsonMessage;
-import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
-import de.hwrberlin.bidhub.json.dataTypes.LoginResponseData;
+import de.hwrberlin.bidhub.model.client.ApplicationClient;
 import de.hwrberlin.bidhub.model.client.LoginHandler;
-import de.hwrberlin.bidhub.model.shared.CallbackType;
-import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
-import de.hwrberlin.bidhub.util.WaitForResponse;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -45,6 +40,9 @@ public class LoginController implements Initializable {
         if (handler.validateLogin(fxUsername.getText(), fxPassword.getText())){
             login();
         }
+        else{
+            fxErrorMsg.setVisible(true);
+        }
     }
 
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
@@ -55,6 +53,7 @@ public class LoginController implements Initializable {
     }
 
     private void login(){
+        ClientApplication.setApplicationClient(new ApplicationClient(fxUsername.getText()));
         StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
     }
 

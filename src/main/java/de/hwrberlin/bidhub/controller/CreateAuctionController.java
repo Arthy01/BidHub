@@ -1,5 +1,7 @@
 package de.hwrberlin.bidhub.controller;
 
+import de.hwrberlin.bidhub.model.client.CreateAuctionHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -22,9 +24,12 @@ public class CreateAuctionController implements Initializable {
     @FXML
     private Button fxCreateAuction;
 
+    private final CreateAuctionHandler handler = new CreateAuctionHandler();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupVisibilityChoiceBox();
+        fxCreateAuction.setOnAction(this::onCreateAuctionButtonPressed);
     }
 
     private void setupVisibilityChoiceBox(){
@@ -34,7 +39,8 @@ public class CreateAuctionController implements Initializable {
         fxVisibility.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if ("Öffentlich".equals(newValue)) {
                 changeVisibility(false);
-            } else if ("Privat".equals(newValue)) {
+            }
+            else if ("Privat".equals(newValue)) {
                 changeVisibility(true);
             }
         });
@@ -44,5 +50,10 @@ public class CreateAuctionController implements Initializable {
 
     private void changeVisibility(boolean isPrivate){
         fxPassword.setVisible(isPrivate);
+        fxPassword.setText("");
+    }
+
+    private void onCreateAuctionButtonPressed(ActionEvent event){
+        handler.createAuction(fxTitle.getText(), fxDescription.getText(), fxPassword.getText());
     }
 }

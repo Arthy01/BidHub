@@ -1,9 +1,13 @@
 package de.hwrberlin.bidhub;
 
 
+import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.model.client.ApplicationClient;
+import de.hwrberlin.bidhub.model.shared.CallbackType;
+import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
+import de.hwrberlin.bidhub.util.WaitForResponse;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -62,6 +66,7 @@ public class ClientApplication extends Application {
         }
         closeRequestHooks.clear();
 
+        unregisterFromCurrentConnectedRoom();
         StageManager.createStage(FxmlFile.Login, "Login", false);
         applicationClient = null;
     }
@@ -74,6 +79,7 @@ public class ClientApplication extends Application {
 
         closeRequestHooks.clear();
 
+        unregisterFromCurrentConnectedRoom();
         clientSocketManager.close();
 
         closedByCloseRequest = true;
@@ -84,5 +90,18 @@ public class ClientApplication extends Application {
             System.err.println("Application stopped unexpectedly!");
             handleCloseRequest(null);
         }
+    }
+
+    public static void unregisterFromCurrentConnectedRoom(){
+        if (applicationClient == null)
+            return;
+
+        if (applicationClient.getCurrentConnectedRoom().isBlank())
+            return;
+
+        JsonMessage msg = new JsonMessage(CallbackType.Server_UnregisterClient.name() + applicationClient.getCurrentConnectedRoom());
+        getSocketManager().send(msg);
+
+        applicationClient.setCurrentConnectedRoom("");
     }
 }

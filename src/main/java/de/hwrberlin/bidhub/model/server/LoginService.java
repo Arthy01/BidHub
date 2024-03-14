@@ -4,12 +4,12 @@ import de.hwrberlin.bidhub.CallbackContext;
 import de.hwrberlin.bidhub.ServerApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
-import de.hwrberlin.bidhub.json.dataTypes.LoginResponseData;
+import de.hwrberlin.bidhub.json.dataTypes.SuccessResponseData;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 
 public class LoginService {
     public LoginService(){
-        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ValidateLogin, this::validateLogin);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ValidateLogin.name(), this::validateLogin);
         System.out.println("Login Callbacks registriert!");
     }
 
@@ -18,12 +18,13 @@ public class LoginService {
         try {
             data = context.message().getData();
         } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren eines Loginrequests!");
             throw new RuntimeException(e);
         }
 
-        System.out.println("Login for: " + data.username());
+        System.out.println("Login Versuch für Username: " + data.username());
 
-        LoginResponseData response = new LoginResponseData(true);
-        context.conn().send(new JsonMessage(CallbackType.Client_Response, response, LoginResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
+        SuccessResponseData response = new SuccessResponseData(!data.username().equals("Fail"));
+        context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), response, SuccessResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 }

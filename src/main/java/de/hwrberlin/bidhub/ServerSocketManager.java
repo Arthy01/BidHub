@@ -8,22 +8,26 @@ import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class ServerSocketManager extends WebSocketServer {
-    private final HashMap<CallbackType, Consumer<CallbackContext>> callbacks = new HashMap<>();
+    private final ExecutorService messageThreadPool;
+    private final HashMap<String, Consumer<CallbackContext>> callbacks = new HashMap<>();
 
-    public void registerCallback(CallbackType callbackType, Consumer<CallbackContext> callback){
+    public synchronized void registerCallback(String callbackType, Consumer<CallbackContext> callback){
         callbacks.put(callbackType, callback);
     }
 
-    public void unregisterCallback(CallbackType callbackType){
+    public synchronized void unregisterCallback(String callbackType){
         callbacks.remove(callbackType);
     }
 
     public ServerSocketManager(InetSocketAddress address) {
         super(address);
         this.setReuseAddr(true);
+        messageThreadPool = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -38,10 +42,10 @@ public class ServerSocketManager extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println("Nachricht von Client empfangen: " + message);
-        //conn.send(message);
+        //System.out.println("Nachricht von Client empfangen: " + message);
+
         JsonMessage msg = JsonMessage.fromJson(message);
-        callbacks.get(msg.getCallbackType()).accept(new CallbackContext(msg, conn));
+        processMessage(new CallbackContext(msg, conn));
     }
 
     @Override
@@ -52,5 +56,23 @@ public class ServerSocketManager extends WebSocketServer {
     @Override
     public void onStart() {
         System.out.println("Server gestartet!");
+    }
+
+    private synchronized void processMessage(CallbackContext context) {
+       messageThreadPool.submit(() -> {
+           Consumer<CallbackContext> callback;
+
+           synchronized (callbacks){
+               callback = callbacks.get(context.message().getCallbackType());
+           }
+
+           if (callback == null){
+               System.out.println("Callback " + context.message().getCallbackType() + " nicht registriert! Message verworfen.");
+               context.conn().send(new JsonMessage(CallbackType.Client_Response.name()).setResponseId(context.message().getMessageId()).toJson());
+           }
+           else {
+               callback.accept(context);
+           }
+       });
     }
 }

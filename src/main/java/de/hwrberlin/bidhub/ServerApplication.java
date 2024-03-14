@@ -1,5 +1,6 @@
 package de.hwrberlin.bidhub;
 
+import de.hwrberlin.bidhub.model.server.AuctionRoomManagerService;
 import de.hwrberlin.bidhub.model.server.LoginService;
 
 import java.net.InetSocketAddress;
@@ -11,6 +12,7 @@ public class ServerApplication {
         serverSocketManager.start();
 
         LoginService loginService = new LoginService();
+        AuctionRoomManagerService auctionRoomManagerService = new AuctionRoomManagerService();
     }
 
     public static ServerSocketManager getSocketManager(){
