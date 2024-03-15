@@ -12,5 +12,7 @@ public enum CallbackType {
     Server_UnregisterClient,
     Server_GetAvailableRooms,
     Client_ReceiveChatMessage,
-    Client_OnRoomClosed
+    Client_OnRoomClosed,
+    Server_AuctionRoomKickClient,
+    Server_AuctionRoomBanClient
 }

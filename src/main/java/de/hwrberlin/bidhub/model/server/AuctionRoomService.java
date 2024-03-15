@@ -21,6 +21,7 @@ public class AuctionRoomService {
     private final ArrayList<Runnable> closeRoomHooks = new ArrayList<>();
     private final AuctionRoomInfo info;
     private Pair<WebSocket, ClientInfo> initiator;
+    private final ArrayList<String> bannedClients = new ArrayList<>();
 
     public AuctionRoomService(AuctionRoomInfo info){
         this.info = info;
@@ -64,6 +65,8 @@ public class AuctionRoomService {
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetIsInitiator.name() + info.getId(), this::getInitiatorRequest);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetAuctionRoomInfo.name() + info.getId(), this::getAuctionRoomInfoRequest);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ValidateRoomPassword.name() + info.getId(), this::validatePasswordRequest);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomKickClient.name() + info.getId(), this::handleKickRequest);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomBanClient.name() + info.getId(), this::handleBanRequest);
     }
 
     private void unregisterCallbacks(){
@@ -79,7 +82,9 @@ public class AuctionRoomService {
         isStarted = false;
 
         for (Map.Entry<WebSocket, ClientInfo> entry: registeredClients.entrySet()){
-            entry.getKey().send(new JsonMessage(CallbackType.Client_OnRoomClosed.name()).toJson());
+            entry.getKey().send(new JsonMessage(CallbackType.Client_OnRoomClosed.name(),
+                    new RoomClosedResponseData("closed"),
+                    RoomClosedResponseData.class.getName()).toJson());
         }
 
         unregisterCallbacks();
@@ -103,6 +108,13 @@ public class AuctionRoomService {
         }
 
         ClientInfo clientInfo = new ClientInfo(context.conn(), data.username(), info.getClients().isEmpty());
+
+        if (bannedClients.contains(clientInfo.getUsername())){
+            System.out.println("Der Benutzer " + clientInfo.getUsername() + " hat versucht sich im Auction Room " + info.getId() + " anzumelden obwohl er gebannt ist.");
+            JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), new SuccessResponseData(false), SuccessResponseData.class.getName()).setResponseId(context.message().getMessageId());
+            context.conn().send(msg.toJson());
+            return;
+        }
 
         registeredClients.put(clientInfo.getConnection(), clientInfo);
         info.addClient(clientInfo.getUsername(), clientInfo.isInitiator());
@@ -224,5 +236,70 @@ public class AuctionRoomService {
 
     private synchronized void getAuctionRoomInfoRequest(CallbackContext context){
         context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), getInfo(), AuctionRoomInfo.class.getName()).setResponseId(context.message().getMessageId()).toJson());
+    }
+
+    private synchronized void handleKickRequest(CallbackContext context){
+        if (!context.conn().equals(initiator.getKey())){
+            System.out.println("Nur der Initiator darf Benutzer kicken!");
+            return;
+        }
+
+        KickBanRequestData data;
+        try {
+            data = context.message().getData();
+        } catch (Exception e) {
+            System.out.println("Fehler bei der Konvertierung eines Kick-Requests im Auction Room " + info.getId() + "!");
+            throw new RuntimeException(e);
+        }
+
+        kickClient(data.username());
+    }
+
+    private synchronized void handleBanRequest(CallbackContext context){
+        if (!context.conn().equals(initiator.getKey())){
+            System.out.println("Nur der Initiator darf Benutzer bannen!");
+            return;
+        }
+
+        KickBanRequestData data;
+        try {
+            data = context.message().getData();
+        } catch (Exception e) {
+            System.out.println("Fehler bei der Konvertierung eines Ban-Requests im Auction Room " + info.getId() + "!");
+            throw new RuntimeException(e);
+        }
+
+        banClient(data.username());
+    }
+
+    private synchronized void kickClient(String username){
+        if (initiator.getValue().getUsername().equals(username)){
+            System.out.println("Der Initiator kann nicht gekicked werden!");
+            return;
+        }
+
+        for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
+            if (entry.getValue().getUsername().equals(username)){
+                entry.getKey().send(new JsonMessage(CallbackType.Client_OnRoomClosed.name(),
+                        new RoomClosedResponseData("kick"),
+                        RoomClosedResponseData.class.getName()).toJson());
+            }
+        }
+    }
+
+    private synchronized void banClient(String username){
+        if (initiator.getValue().getUsername().equals(username)){
+            System.out.println("Der Initiator kann nicht gebannt werden!");
+            return;
+        }
+
+        for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
+            if (entry.getValue().getUsername().equals(username)){
+                bannedClients.add(entry.getValue().getUsername());
+                entry.getKey().send(new JsonMessage(CallbackType.Client_OnRoomClosed.name(),
+                        new RoomClosedResponseData("ban"),
+                        RoomClosedResponseData.class.getName()).toJson());
+            }
+        }
     }
 }

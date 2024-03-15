@@ -3,6 +3,7 @@ package de.hwrberlin.bidhub.model.client;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.ChatMessageRequestData;
+import de.hwrberlin.bidhub.json.dataTypes.KickBanRequestData;
 import de.hwrberlin.bidhub.json.dataTypes.SuccessResponseData;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
@@ -60,10 +61,10 @@ public class AuctionRoomHandler {
         return roomInfo;
     }
 
-    public void leaveRoom(){
+    public void leaveRoom(LeaveRoomReason reason){
         ClientApplication.unregisterFromCurrentConnectedRoom();
         StageManager.setScene(FxmlFile.Dashboard, true);
-        System.out.println("Auction Room " + roomId + " wurde verlassen!");
+        System.out.println("Auction Room " + roomId + " wurde verlassen! (Grund: " + reason.name() + ")");
     }
 
     public String sendChatMessage(String message){
@@ -84,20 +85,12 @@ public class AuctionRoomHandler {
         String[] parts = message.split(" ", 2);
         String command = parts[0];
 
-        switch (command.toLowerCase()) {
-            case "/pm":
-                return handlePrivateMessageCommand(message);
-                /*
-            case "/kick":
-                handleKickUser(args, sender);
-                break;
-            case "/ban":
-                handleBanUser(args, sender);
-                break;
-            */
-            default:
-                return "Der Befehl " + command + " existiert nicht!";
-        }
+        return switch (command.toLowerCase()) {
+            case "/pm" -> handlePrivateMessageCommand(message);
+            case "/kick" -> handleKickClient(message);
+            case "/ban" -> handleBanClient(message);
+            default -> "Der Befehl " + command + " existiert nicht!";
+        };
     }
 
     private String handlePrivateMessageCommand(String rawMessage){
@@ -105,7 +98,6 @@ public class AuctionRoomHandler {
         String message;
         try{
             String[] parts = rawMessage.split(" ", 3);
-            String command = parts[0];
             String[] args = Arrays.copyOfRange(parts, 1, parts.length);
 
             recipient = args[0];
@@ -128,6 +120,74 @@ public class AuctionRoomHandler {
         JsonMessage msg = new JsonMessage(CallbackType.Server_ReceiveChatMessageFromClient.name() + roomId,
                 new ChatMessageRequestData(message, recipient),
                 ChatMessageRequestData.class.getName());
+
+        ClientApplication.getSocketManager().send(msg);
+        return "";
+    }
+
+    private String handleKickClient(String message){
+        if (!getIsInitiator())
+            return "Du bist nicht berechtigt einen Benutzer zu kicken!";
+
+        String kickUsername;
+        try{
+            String[] parts = message.split(" ", 2);
+            String[] args = Arrays.copyOfRange(parts, 1, parts.length);
+
+            kickUsername = args[0];
+        }
+        catch (Exception e){
+            return "Ungültige Parameterreihenfolge für den Befehl /kick. (/kick {benutzername}";
+        }
+
+        if (kickUsername.equals(ClientApplication.getApplicationClient().getUsername())) {
+            return "Du kannst dich nicht selbst kicken!";
+        }
+
+        AuctionRoomInfo info = getAuctionRoomInfo();
+
+        if (!info.getClients().containsKey(kickUsername))
+            return "Der Benutzer " + kickUsername + " ist nicht im Auktionsraum!";
+
+        System.out.println("Versuche den Benutzer " + kickUsername + " zu kicken.");
+
+        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomKickClient.name() + roomId,
+                new KickBanRequestData(kickUsername),
+                KickBanRequestData.class.getName());
+
+        ClientApplication.getSocketManager().send(msg);
+        return "";
+    }
+
+    private String handleBanClient(String message){
+        if (!getIsInitiator())
+            return "Du bist nicht berechtigt einen Benutzer zu bannen!";
+
+        String banUsername;
+        try{
+            String[] parts = message.split(" ", 2);
+            String[] args = Arrays.copyOfRange(parts, 1, parts.length);
+
+            banUsername = args[0];
+        }
+        catch (Exception e){
+            return "Ungültige Parameterreihenfolge für den Befehl /ban. (/ban {benutzername}";
+        }
+
+        if (banUsername.equals(ClientApplication.getApplicationClient().getUsername())) {
+            return "Du kannst dich nicht selbst bannen!";
+        }
+
+        AuctionRoomInfo info = getAuctionRoomInfo();
+
+        if (!info.getClients().containsKey(banUsername))
+            return "Der Benutzer " + banUsername + " ist nicht im Auktionsraum!";
+
+        System.out.println("Versuche den Benutzer " + banUsername + " zu bannen.");
+
+        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomBanClient.name() + roomId,
+                new KickBanRequestData(banUsername),
+                KickBanRequestData.class.getName());
 
         ClientApplication.getSocketManager().send(msg);
         return "";

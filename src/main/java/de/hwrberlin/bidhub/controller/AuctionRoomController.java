@@ -3,7 +3,10 @@ package de.hwrberlin.bidhub.controller;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.ChatMessageResponseData;
+import de.hwrberlin.bidhub.json.dataTypes.KickBanRequestData;
+import de.hwrberlin.bidhub.json.dataTypes.RoomClosedResponseData;
 import de.hwrberlin.bidhub.model.client.AuctionRoomHandler;
+import de.hwrberlin.bidhub.model.client.LeaveRoomReason;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 import de.hwrberlin.bidhub.util.FxmlFile;
@@ -195,7 +198,7 @@ public class AuctionRoomController {
 
     private void onLeaveRoomButtonPressed(ActionEvent event){
         unregisterCallbacks();
-        handler.leaveRoom();
+        handler.leaveRoom(LeaveRoomReason.Self);
     }
 
     private void onRoomClosed(JsonMessage msg){
@@ -203,6 +206,22 @@ public class AuctionRoomController {
             return;
 
         unregisterCallbacks();
-        Platform.runLater(handler::leaveRoom);
+
+        LeaveRoomReason reason = LeaveRoomReason.Unspecified;
+        RoomClosedResponseData data;
+        try {
+            data = msg.getData();
+            if (data.reason().equals("kick"))
+                reason = LeaveRoomReason.Kick;
+            else if (data.reason().equals("ban"))
+                reason = LeaveRoomReason.Ban;
+            else
+                reason = LeaveRoomReason.Closed;
+        } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren der RoomClosedRespnseData!");
+        }
+
+        LeaveRoomReason finalReason = reason;
+        Platform.runLater(() -> handler.leaveRoom(finalReason));
     }
 }

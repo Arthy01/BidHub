@@ -39,7 +39,7 @@ public class JoinAuctionHandler {
         }
 
         if (!data.success()){
-            System.out.println("Client konnte serverseitig nicht registriert werden!");
+            System.out.println("Client konnte serverseitig nicht registriert werden! Vermutlich weil er gebannt ist.");
             return;
         }
 
