@@ -14,5 +14,12 @@ public enum CallbackType {
     Client_ReceiveChatMessage,
     Client_OnRoomClosed,
     Server_AuctionRoomKickClient,
-    Server_AuctionRoomBanClient
+    Server_AuctionRoomBanClient,
+    Server_AuctionRoomStartAuction,
+    Server_AuctionRoomOnBidRequest,
+    Client_OnAuctionStarted,
+    Client_OnAuctionFinished,
+    Client_OnTick,
+    Client_OnBid,
+    Server_GetAuctionInfoRequest
 }

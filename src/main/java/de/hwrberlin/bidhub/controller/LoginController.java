@@ -58,7 +58,6 @@ public class LoginController implements Initializable {
     }
 
     private void onRegisterLinkPressed(ActionEvent event) {
-        System.out.println("Test");
-        StageManager.createPopup(FxmlFile.Dashboard, "TestPopUp");
+
     }
 }

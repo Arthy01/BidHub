@@ -1,16 +1,18 @@
 package de.hwrberlin.bidhub.model.client;
 
 import de.hwrberlin.bidhub.ClientApplication;
+import de.hwrberlin.bidhub.ServerApplication;
+import de.hwrberlin.bidhub.controller.InfoPopupController;
 import de.hwrberlin.bidhub.json.JsonMessage;
-import de.hwrberlin.bidhub.json.dataTypes.ChatMessageRequestData;
-import de.hwrberlin.bidhub.json.dataTypes.KickBanRequestData;
-import de.hwrberlin.bidhub.json.dataTypes.SuccessResponseData;
+import de.hwrberlin.bidhub.json.dataTypes.*;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.FxmlFile;
+import de.hwrberlin.bidhub.util.Pair;
 import de.hwrberlin.bidhub.util.StageManager;
 import de.hwrberlin.bidhub.util.WaitForResponse;
+import javafx.stage.Stage;
 
 import java.util.Arrays;
 
@@ -61,10 +63,45 @@ public class AuctionRoomHandler {
         return roomInfo;
     }
 
+    public AuctionInfo getAuctionInfo(){
+        JsonMessage msg = new JsonMessage(CallbackType.Server_GetAuctionInfoRequest.name() + roomId);
+        NetworkResponse response = new NetworkResponse();
+        ClientApplication.getSocketManager().send(msg, response);
+
+        new WaitForResponse(response);
+
+        AuctionInfo auctionInfo;
+        try {
+            auctionInfo = response.getResponse().getData();
+            return auctionInfo;
+        } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren der Auction Info! Möglicherweise ist keine Auktion gestartet, dann ist das Verhalten korrekt.");
+            return null;
+        }
+    }
+
     public void leaveRoom(LeaveRoomReason reason){
         ClientApplication.unregisterFromCurrentConnectedRoom();
         StageManager.setScene(FxmlFile.Dashboard, true);
         System.out.println("Auction Room " + roomId + " wurde verlassen! (Grund: " + reason.name() + ")");
+
+        if (reason == LeaveRoomReason.Self)
+            return;
+
+        Pair<InfoPopupController, Stage> popup = StageManager.createPopup(FxmlFile.InfoPopup, "Raum verlassen");
+
+        if (reason == LeaveRoomReason.Kick){
+            popup.getKey().initialize("Du wurdest aus dem Auktionsraum gekicked!", popup.getValue());
+        }
+        else if (reason == LeaveRoomReason.Ban){
+            popup.getKey().initialize("Du wurdest aus dem Auktionsraum gebannt! Du kannst ihn nicht wieder betreten.", popup.getValue());
+        }
+        else if (reason == LeaveRoomReason.Closed){
+            popup.getKey().initialize("Der Auktionsraum wurde vom Auktionär geschlossen.", popup.getValue());
+        }
+        else if (reason == LeaveRoomReason.Unspecified) {
+            popup.getKey().initialize("Der Auktionsraum wurde aus einem unbekannten Grund geschlossen.", popup.getValue());
+        }
     }
 
     public String sendChatMessage(String message){
@@ -191,5 +228,41 @@ public class AuctionRoomHandler {
 
         ClientApplication.getSocketManager().send(msg);
         return "";
+    }
+
+    public void startAuction(AuctionInfo auctionInfo){
+        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomStartAuction.name() + roomId, auctionInfo, AuctionInfo.class.getName());
+        NetworkResponse response = new NetworkResponse();
+        ClientApplication.getSocketManager().send(msg, response);
+
+        new WaitForResponse(response);
+
+        SuccessResponseData data;
+        try {
+            data = response.getResponse().getData();
+        } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren!");
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Konnte Auktion gestartet werden: " + data.success());
+    }
+
+    public boolean placeBid(float bid){
+        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomOnBidRequest.name() + roomId, new AuctionRoomBidData(bid, ClientApplication.getApplicationClient().getUsername()), AuctionRoomBidData.class.getName());
+        NetworkResponse response = new NetworkResponse();
+        ClientApplication.getSocketManager().send(msg, response);
+
+        new WaitForResponse(response);
+
+        SuccessResponseData data;
+        try {
+            data = response.getResponse().getData();
+        } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren der Bid Response!");
+            throw new RuntimeException(e);
+        }
+
+        return data.success();
     }
 }

@@ -56,8 +56,8 @@ public abstract class StageManager {
 
             stage.setResizable(resizable);
 
-            stage.setMinHeight(scene.getRoot().minHeight(-1) + 50);
-            stage.setMinWidth(scene.getRoot().minWidth(-1) + 50);
+            stage.setMinHeight(scene.getRoot().minHeight(-1) + 0);
+            stage.setMinWidth(scene.getRoot().minWidth(-1) + 0);
 
             if (prevWidth >= scene.getRoot().minWidth(-1))
                 stage.setWidth(prevWidth);
@@ -65,8 +65,10 @@ public abstract class StageManager {
             if (prevHeight >= scene.getRoot().minHeight(-1))
                 stage.setHeight(prevHeight);
 
-            stage.hide();
-            stage.show();
+            if (stage.isShowing()){
+                stage.hide();
+                stage.show();
+            }
 
             return fxmlLoader.getController();
         } catch (IOException e) {
@@ -100,19 +102,20 @@ public abstract class StageManager {
         mainStage.show();
     }
 
-    public static <T> T createPopup(FxmlFile scene, String title){
+    public static <T> Pair<T, Stage> createPopup(FxmlFile scene, String title){
         Stage stage = new Stage();
 
         T controller = setScene(stage, scene, false);
 
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initOwner(mainStage);
+
         stage.setTitle("[Popup] BidHub - " + title);
         stage.getIcons().add(new Image(Resources.getURLAsStream(BIDHUB_ICON)));
 
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(mainStage);
-        stage.showAndWait();
+        stage.show();
 
-        return controller;
+        return new Pair<>(controller, stage);
     }
 
     /**

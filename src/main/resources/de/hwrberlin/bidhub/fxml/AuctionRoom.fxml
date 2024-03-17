@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox minHeight="600.0" minWidth="1066.0" prefHeight="800.0" prefWidth="1420.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.AuctionRoomController">
+<VBox minHeight="650.0" minWidth="1116.0" prefHeight="800.0" prefWidth="1420.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.AuctionRoomController">
    <children>
       <GridPane prefHeight="50.0">
          <columnConstraints>
@@ -113,6 +113,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label text="Momentanes Gebot:" GridPane.rowIndex="1" />
@@ -121,6 +122,8 @@
                                     <Label fx:id="fxMinimumIncrement" text="{amount}" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <Label text="Verbleibende Zeit:" />
                                     <Label fx:id="fxRemainingTime" text="{time}" GridPane.columnIndex="1" />
+                                    <Label text="Mindestgebot:" GridPane.rowIndex="3" />
+                                    <Label fx:id="fxMinimumBid" text="{amount}" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                  </children>
                               </GridPane>
                               <VBox fx:id="fxBidBox" alignment="CENTER" spacing="10.0">
@@ -138,6 +141,7 @@
                                     </HBox>
                                  </children>
                               </VBox>
+                              <Button fx:id="fxStartAuction" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="positive" text="Auktion starten" />
                            </children>
                         </VBox>
                      </children>

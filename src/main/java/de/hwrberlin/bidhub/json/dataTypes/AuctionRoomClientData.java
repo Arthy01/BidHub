@@ -1,4 +1,4 @@
-package de.hwrberlin.bidhub.model.shared;
+package de.hwrberlin.bidhub.json.dataTypes;
 
 import java.io.Serializable;
 

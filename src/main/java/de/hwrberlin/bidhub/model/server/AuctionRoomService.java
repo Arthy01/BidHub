@@ -1,6 +1,7 @@
 package de.hwrberlin.bidhub.model.server;
 
 import de.hwrberlin.bidhub.CallbackContext;
+import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.ServerApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.*;
@@ -15,13 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuctionRoomService {
-    public static final int TICKS_PER_SECOND = 1;
     private volatile boolean isStarted = false;
     private final HashMap<WebSocket, ClientInfo> registeredClients = new HashMap<>();
     private final ArrayList<Runnable> closeRoomHooks = new ArrayList<>();
     private final AuctionRoomInfo info;
     private Pair<WebSocket, ClientInfo> initiator;
     private final ArrayList<String> bannedClients = new ArrayList<>();
+
+    private AuctionInfo currentAuctionInfo = null;
+    //private float currentBid = 0;
+    //private Pair<WebSocket, String> currentBidClient = null;
 
     public AuctionRoomService(AuctionRoomInfo info){
         this.info = info;
@@ -38,7 +42,7 @@ public class AuctionRoomService {
         new Thread(() -> {
             while (isStarted){
                 try {
-                    Thread.sleep(1000 / TICKS_PER_SECOND);
+                    Thread.sleep(1000);
                     onTick();
                 }
                 catch (InterruptedException e) {
@@ -67,6 +71,9 @@ public class AuctionRoomService {
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ValidateRoomPassword.name() + info.getId(), this::validatePasswordRequest);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomKickClient.name() + info.getId(), this::handleKickRequest);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomBanClient.name() + info.getId(), this::handleBanRequest);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomStartAuction.name() + info.getId(), this::onStartAuctionRequest);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_AuctionRoomOnBidRequest.name() +info.getId(), this::onBidRequest);
+        ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetAuctionInfoRequest.name() + info.getId(), this::onGetAuctionInfoRequest);
     }
 
     private void unregisterCallbacks(){
@@ -76,6 +83,11 @@ public class AuctionRoomService {
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_GetIsInitiator.name() + info.getId());
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_GetAuctionRoomInfo.name() + info.getId());
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_ValidateRoomPassword.name() + info.getId());
+        ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_AuctionRoomKickClient.name() + info.getId());
+        ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_AuctionRoomBanClient.name() + info.getId());
+        ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_AuctionRoomStartAuction.name() + info.getId());
+        ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_AuctionRoomOnBidRequest.name() + info.getId());
+        ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_GetAuctionInfoRequest.name() + info.getId());
     }
 
     public synchronized void stop(){
@@ -220,7 +232,18 @@ public class AuctionRoomService {
     }
 
     private synchronized void onTick(){
+        if (currentAuctionInfo == null)
+            return;
 
+        int remainingSeconds = currentAuctionInfo.reduceRemainingSeconds();
+
+        if (remainingSeconds == 0){
+            finishAuction();
+        }
+        else{
+            JsonMessage msg = new JsonMessage(CallbackType.Client_OnTick.name(), new AuctionRoomTickData(currentAuctionInfo.getRemainingSeconds()), AuctionRoomTickData.class.getName());
+            sendJsonToAllClients(msg.toJson());
+        }
     }
 
     public synchronized void addCloseRoomHook(Runnable hook){
@@ -301,5 +324,96 @@ public class AuctionRoomService {
                         RoomClosedResponseData.class.getName()).toJson());
             }
         }
+    }
+
+    private synchronized void onStartAuctionRequest(CallbackContext context){
+        boolean success = false;
+
+        if (currentAuctionInfo == null){
+            AuctionInfo info;
+            try {
+                info = context.message().getData();
+                startAuction(info);
+                success = true;
+            } catch (Exception e) {
+                System.out.println("Fehler beim Konvertieren der AuctionInfo!");
+            }
+        }
+
+        JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), new SuccessResponseData(success), SuccessResponseData.class.getName());
+        context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
+    }
+
+    private synchronized void startAuction(AuctionInfo info){
+        currentAuctionInfo = info;
+        currentAuctionInfo.setBidData(null);
+
+        JsonMessage msg = new JsonMessage(CallbackType.Client_OnAuctionStarted.name(), currentAuctionInfo, AuctionInfo.class.getName());
+        sendJsonToAllClients(msg.toJson());
+        sendChatMessageToClients(new ChatMessageResponseData("Eine Auktion wurde gestartet!", "SYSTEM", Helpers.getCurrentTime(), true, ""));
+    }
+
+    private synchronized void finishAuction(){
+        String username = "";
+        String bidInfo = " Kein Benutzer hat das Produkt ersteigert, da keine Gebote abgegeben wurden.";
+
+        if (currentAuctionInfo.getBidData() != null){
+            username = currentAuctionInfo.getBidData().username();
+            bidInfo = " Der Benutzer " + username + " hat das Produkt für " + Helpers.formatToEuro(currentAuctionInfo.getBidData().bid()) + " ersteigert.";
+        }
+
+        JsonMessage msg = new JsonMessage(CallbackType.Client_OnAuctionFinished.name());
+        sendJsonToAllClients(msg.toJson());
+
+        sendChatMessageToClients(new ChatMessageResponseData("Die Auktion ist abgeschlossen!" + bidInfo,
+                "SYSTEM", Helpers.getCurrentTime(), true, ""));
+
+        currentAuctionInfo = null;
+    }
+
+    private synchronized void onBidRequest(CallbackContext context){
+        boolean success = false;
+        AuctionRoomBidData data = null;
+        try {
+            data = context.message().getData();
+            float currentBid = 0;
+
+            if (currentAuctionInfo.getBidData() != null)
+                currentBid = currentAuctionInfo.getBidData().bid();
+
+            if (data.bid() >= currentBid + currentAuctionInfo.getMinimumIncrement() && data.bid() >= currentAuctionInfo.getMinimumBid()){
+                for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
+                    if (data.username().equals(entry.getValue().getUsername())){
+                        currentAuctionInfo.setBidData(data);
+                        success = true;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Fehler beim Konvertieren der Bid Data");
+        }
+
+        JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), new SuccessResponseData(success), SuccessResponseData.class.getName());
+        context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
+
+        if (success){
+            sendChatMessageToClients(new ChatMessageResponseData(data.username() + " hat ein Gebot abgegeben: " + Helpers.formatToEuro(data.bid()),
+                    "SYSTEM", Helpers.getCurrentTime(), true, ""));
+
+            JsonMessage bidMsg = new JsonMessage(CallbackType.Client_OnBid.name(), data, AuctionRoomBidData.class.getName());
+            sendJsonToAllClients(bidMsg.toJson());
+        }
+    }
+
+    private synchronized void sendJsonToAllClients(String json){
+        for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
+            entry.getKey().send(json);
+        }
+    }
+
+    private synchronized void onGetAuctionInfoRequest(CallbackContext context){
+        JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), currentAuctionInfo, AuctionInfo.class.getName());
+        context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
     }
 }

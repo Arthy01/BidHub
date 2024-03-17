@@ -2,6 +2,7 @@ package de.hwrberlin.bidhub.model.client;
 
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.controller.AuctionRoomController;
+import de.hwrberlin.bidhub.controller.InfoPopupController;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.AuctionRoomPasswordValidationRequestData;
 import de.hwrberlin.bidhub.json.dataTypes.AuctionRoomRegisterClientRequestData;
@@ -11,10 +12,8 @@ import de.hwrberlin.bidhub.model.server.ClientInfo;
 import de.hwrberlin.bidhub.model.shared.AuctionRoomInfo;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 import de.hwrberlin.bidhub.model.shared.NetworkResponse;
-import de.hwrberlin.bidhub.util.FxmlFile;
-import de.hwrberlin.bidhub.util.Helpers;
-import de.hwrberlin.bidhub.util.StageManager;
-import de.hwrberlin.bidhub.util.WaitForResponse;
+import de.hwrberlin.bidhub.util.*;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
@@ -39,7 +38,8 @@ public class JoinAuctionHandler {
         }
 
         if (!data.success()){
-            System.out.println("Client konnte serverseitig nicht registriert werden! Vermutlich weil er gebannt ist.");
+            Pair<InfoPopupController, Stage> popup = StageManager.createPopup(FxmlFile.InfoPopup, "Du wurdest gebannt");
+            popup.getKey().initialize("Du kannst dem Raum nicht beitreten da du gebannt wurdest!", popup.getValue());
             return;
         }
 

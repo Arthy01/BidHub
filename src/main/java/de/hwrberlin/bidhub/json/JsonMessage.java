@@ -41,6 +41,7 @@ public class JsonMessage {
     }
 
     public <T> T getData() throws Exception {
+        System.out.println("Konvertierung in: " + dataType);
         return (T) gson.fromJson(data, Class.forName(dataType));
     }
 
