@@ -15,6 +15,7 @@ public abstract class FxmlRef {
     private static final HashMap<FxmlFile, String> paths = new HashMap<>() {
         {
             put(FxmlFile.Login, "fxml/Login.fxml");
+            put(FxmlFile.Register, "fxml/Register.fxml");
             put(FxmlFile.Dashboard, "fxml/Dashboard.fxml");
             put(FxmlFile.AuctionRoom, "fxml/AuctionRoom.fxml");
             put(FxmlFile.ChatMessage, "fxml/ChatMessage.fxml");
