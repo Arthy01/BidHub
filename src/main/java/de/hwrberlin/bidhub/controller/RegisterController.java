@@ -14,33 +14,44 @@ import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class LoginController implements Initializable {
+public class RegisterController implements Initializable {
     @FXML
-    private TextField fxUsername;
+    TextField fxUsername;
     @FXML
-    private PasswordField fxPassword;
+    TextField fxEmail;
+    @FXML
+    PasswordField fxPassword;
     @FXML
     private Label fxErrorMsg;
     @FXML
-    private Button fxLogin;
+    private Button fxRegister;
     @FXML
-    private Hyperlink fxRegister;
+    private Hyperlink fxLogin;
 
     private final LoginHandler handler = new LoginHandler();
 
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    private final Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+    
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        fxLogin.setOnAction(this::onLoginButtonPressed);
+        fxRegister.setOnAction(this::onRegisterButtonPressed);
+        fxLogin.setOnAction(this::onLoginLinkPressed);
         fxPassword.setOnKeyPressed(this::onPasswordKeyPressed);
-        fxRegister.setOnAction(this::onRegisterLinkPressed);
     }
 
-    private void onLoginButtonPressed(ActionEvent event) {
-        if (handler.validateLogin(fxUsername.getText(), fxPassword.getText())){
-            login();
-        }
-        else{
+    private boolean validateEmail(String email) {
+        Matcher matcher = emailPattern.matcher(email);
+        return matcher.matches();
+    }
+
+    private void onRegisterButtonPressed(ActionEvent event) {
+        if(validateEmail(fxEmail.getText()) && handler.validateLogin(fxUsername.getText(), fxPassword.getText())) {
+            register();
+        } else {
             fxErrorMsg.setVisible(true);
         }
     }
@@ -48,16 +59,16 @@ public class LoginController implements Initializable {
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER) {
-            onLoginButtonPressed(null);
+            onRegisterButtonPressed(null);
         }
     }
 
-    private void login(){
+    private void register() {
         ClientApplication.setApplicationClient(new ApplicationClient(fxUsername.getText()));
         StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
     }
 
-    private void onRegisterLinkPressed(ActionEvent event) {
-        StageManager.createStage(FxmlFile.Register, "Registrieren",true);
+    private void onLoginLinkPressed(ActionEvent event) {
+        StageManager.createStage(FxmlFile.Login, "Login",true);
     }
 }
