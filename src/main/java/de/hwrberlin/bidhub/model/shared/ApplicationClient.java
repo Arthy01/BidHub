@@ -1,11 +1,13 @@
-package de.hwrberlin.bidhub.model.client;
+package de.hwrberlin.bidhub.model.shared;
 
 public class ApplicationClient {
     private final String username;
+    private final long id;
     private String currentConnectedRoom = "";
 
-    public ApplicationClient(String username){
+    public ApplicationClient(String username, long id){
         this.username = username;
+        this.id = id;
     }
 
     public String getUsername() {

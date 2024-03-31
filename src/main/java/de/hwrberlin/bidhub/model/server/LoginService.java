@@ -5,7 +5,12 @@ import de.hwrberlin.bidhub.ServerApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
 import de.hwrberlin.bidhub.json.dataTypes.SuccessResponseData;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
+import de.hwrberlin.bidhub.model.shared.ApplicationClientDAO;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class LoginService {
     public LoginService(){
@@ -24,7 +29,7 @@ public class LoginService {
 
         System.out.println("Login Versuch für Username: " + data.username());
 
-        SuccessResponseData response = new SuccessResponseData(!data.username().equals("Fail"));
-        context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), response, SuccessResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
+        ApplicationClient response = ApplicationClientDAO.authenticate(data.username(), data.hashedPassword());
+        context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), response, ApplicationClient.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 }

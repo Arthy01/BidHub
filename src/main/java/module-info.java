@@ -3,6 +3,7 @@ module de.hwrberlin.bidhub {
     requires javafx.fxml;
     requires org.java_websocket;
     requires com.google.gson;
+    requires java.sql;
 
     opens de.hwrberlin.bidhub to javafx.fxml;
     opens de.hwrberlin.bidhub.controller to javafx.fxml;

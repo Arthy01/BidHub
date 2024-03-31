@@ -4,15 +4,16 @@ import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.LoginRequestData;
 import de.hwrberlin.bidhub.json.dataTypes.SuccessResponseData;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.Helpers;
 import de.hwrberlin.bidhub.util.WaitForResponse;
 
 public class LoginHandler {
-    public boolean validateLogin(String username, String password){
+    public ApplicationClient validateLogin(String username, String password){
         if (username.isBlank() || password.isBlank()){
-            return false;
+            return null;
         }
 
         NetworkResponse response = new NetworkResponse();
@@ -25,15 +26,15 @@ public class LoginHandler {
 
         new WaitForResponse(response);
 
-        SuccessResponseData data;
+        ApplicationClient data;
 
         try {
             data = response.getResponse().getData();
         } catch (Exception e) {
             System.out.println("Callback auf dem Server nicht registriert!");
-            return false;
+            return null;
         }
 
-        return data.success();
+        return data;
     }
 }

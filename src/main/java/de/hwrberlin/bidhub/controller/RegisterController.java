@@ -1,7 +1,7 @@
 package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.model.client.ApplicationClient;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import de.hwrberlin.bidhub.model.client.LoginHandler;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
@@ -49,11 +49,12 @@ public class RegisterController implements Initializable {
     }
 
     private void onRegisterButtonPressed(ActionEvent event) {
+        /*
         if(validateEmail(fxEmail.getText()) && handler.validateLogin(fxUsername.getText(), fxPassword.getText())) {
             register();
         } else {
             fxErrorMsg.setVisible(true);
-        }
+        }*/
     }
 
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
@@ -64,8 +65,9 @@ public class RegisterController implements Initializable {
     }
 
     private void register() {
+        /*
         ClientApplication.setApplicationClient(new ApplicationClient(fxUsername.getText()));
-        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
+        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);*/
     }
 
     private void onLoginLinkPressed(ActionEvent event) {

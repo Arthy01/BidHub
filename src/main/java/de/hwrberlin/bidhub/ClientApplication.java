@@ -2,12 +2,11 @@ package de.hwrberlin.bidhub;
 
 
 import de.hwrberlin.bidhub.json.JsonMessage;
-import de.hwrberlin.bidhub.model.client.ApplicationClient;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
-import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.FxmlFile;
+import de.hwrberlin.bidhub.util.Helpers;
 import de.hwrberlin.bidhub.util.StageManager;
-import de.hwrberlin.bidhub.util.WaitForResponse;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
