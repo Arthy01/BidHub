@@ -1,15 +1,16 @@
 package de.hwrberlin.bidhub.model.server;
 
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import org.java_websocket.WebSocket;
 
 public class ClientInfo {
-    private WebSocket connection;
-    private String username;
-    private boolean isInitiator;
+    private final WebSocket connection;
+    private final ApplicationClient client;
+    private final boolean isInitiator;
 
-    public ClientInfo(WebSocket connection, String username, boolean isInitiator) {
+    public ClientInfo(WebSocket connection, ApplicationClient client, boolean isInitiator) {
         this.connection = connection;
-        this.username = username;
+        this.client = client;
         this.isInitiator = isInitiator;
     }
 
@@ -17,23 +18,12 @@ public class ClientInfo {
         return connection;
     }
 
-    public void setConnection(WebSocket connection) {
-        this.connection = connection;
-    }
-
     public String getUsername() {
-        return username;
+        return client.getUsername();
     }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public long getId(){return client.getId();}
 
     public boolean isInitiator() {
         return isInitiator;
-    }
-
-    public void setInitiator(boolean initiator) {
-        isInitiator = initiator;
     }
 }

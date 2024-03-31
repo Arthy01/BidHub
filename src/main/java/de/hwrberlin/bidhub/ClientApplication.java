@@ -35,6 +35,7 @@ public class ClientApplication extends Application {
     }
 
     public static void main(String[] args) {
+        System.out.println(Helpers.hashPassword("test"));
         try {
             clientSocketManager = new ClientSocketManager(SocketInfo.getConnectionURI());
             new Thread(() -> clientSocketManager.connect()).start();

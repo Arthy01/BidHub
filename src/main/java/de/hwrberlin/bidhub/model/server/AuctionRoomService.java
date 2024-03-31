@@ -1,7 +1,6 @@
 package de.hwrberlin.bidhub.model.server;
 
 import de.hwrberlin.bidhub.CallbackContext;
-import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.ServerApplication;
 import de.hwrberlin.bidhub.json.JsonMessage;
 import de.hwrberlin.bidhub.json.dataTypes.*;
@@ -21,11 +20,9 @@ public class AuctionRoomService {
     private final ArrayList<Runnable> closeRoomHooks = new ArrayList<>();
     private final AuctionRoomInfo info;
     private Pair<WebSocket, ClientInfo> initiator;
-    private final ArrayList<String> bannedClients = new ArrayList<>();
+    private final ArrayList<Long> bannedClientsIds = new ArrayList<>();
 
     private AuctionInfo currentAuctionInfo = null;
-    //private float currentBid = 0;
-    //private Pair<WebSocket, String> currentBidClient = null;
 
     public AuctionRoomService(AuctionRoomInfo info){
         this.info = info;
@@ -119,9 +116,9 @@ public class AuctionRoomService {
             throw new RuntimeException(e);
         }
 
-        ClientInfo clientInfo = new ClientInfo(context.conn(), data.username(), info.getClients().isEmpty());
+        ClientInfo clientInfo = new ClientInfo(context.conn(), data.client(), info.getClients().isEmpty());
 
-        if (bannedClients.contains(clientInfo.getUsername())){
+        if (bannedClientsIds.contains(clientInfo.getId())){
             System.out.println("Der Benutzer " + clientInfo.getUsername() + " hat versucht sich im Auction Room " + info.getId() + " anzumelden obwohl er gebannt ist.");
             JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), new SuccessResponseData(false), SuccessResponseData.class.getName()).setResponseId(context.message().getMessageId());
             context.conn().send(msg.toJson());
@@ -318,7 +315,7 @@ public class AuctionRoomService {
 
         for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
             if (entry.getValue().getUsername().equals(username)){
-                bannedClients.add(entry.getValue().getUsername());
+                bannedClientsIds.add(entry.getValue().getId());
                 entry.getKey().send(new JsonMessage(CallbackType.Client_OnRoomClosed.name(),
                         new RoomClosedResponseData("ban"),
                         RoomClosedResponseData.class.getName()).toJson());

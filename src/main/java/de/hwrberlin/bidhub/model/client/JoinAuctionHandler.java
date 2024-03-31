@@ -22,7 +22,7 @@ public class JoinAuctionHandler {
         NetworkResponse response = new NetworkResponse();
         JsonMessage msg = new JsonMessage(
                 CallbackType.Server_RegisterClient.name() + roomId,
-                new AuctionRoomRegisterClientRequestData(ClientApplication.getApplicationClient().getUsername()),
+                new AuctionRoomRegisterClientRequestData(ClientApplication.getApplicationClient()),
                 AuctionRoomRegisterClientRequestData.class.getName());
 
         ClientApplication.getSocketManager().send(msg, response);

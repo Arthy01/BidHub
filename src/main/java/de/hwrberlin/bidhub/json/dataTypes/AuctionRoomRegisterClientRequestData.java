@@ -1,4 +1,6 @@
 package de.hwrberlin.bidhub.json.dataTypes;
 
-public record AuctionRoomRegisterClientRequestData(String username) {
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
+
+public record AuctionRoomRegisterClientRequestData(ApplicationClient client) {
 }

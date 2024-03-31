@@ -21,4 +21,8 @@ public class ApplicationClient {
     public void setCurrentConnectedRoom(String currentConnectedRoom) {
         this.currentConnectedRoom = currentConnectedRoom;
     }
+
+    public long getId() {
+        return id;
+    }
 }
