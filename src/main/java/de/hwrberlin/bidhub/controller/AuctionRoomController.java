@@ -338,6 +338,6 @@ public class AuctionRoomController {
         if (bidData == null)
             fxCurrentBid.setText("/");
         else
-            fxCurrentBid.setText(Helpers.formatToEuro(bidData.bid()) + " (" + bidData.username() + ")");
+            fxCurrentBid.setText(Helpers.formatToEuro(bidData.bid()) + " (" + bidData.client().getUsername() + ")");
     }
 }

@@ -17,5 +17,7 @@ module de.hwrberlin.bidhub {
     exports de.hwrberlin.bidhub.util;
     exports de.hwrberlin.bidhub.json;
     exports de.hwrberlin.bidhub.json.dataTypes;
+    exports de.hwrberlin.bidhub.model.server;
+    opens de.hwrberlin.bidhub.model.server to com.google.gson;
 
 }

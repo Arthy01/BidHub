@@ -249,7 +249,7 @@ public class AuctionRoomHandler {
     }
 
     public boolean placeBid(float bid){
-        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomOnBidRequest.name() + roomId, new AuctionRoomBidData(bid, ClientApplication.getApplicationClient().getUsername()), AuctionRoomBidData.class.getName());
+        JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomOnBidRequest.name() + roomId, new AuctionRoomBidData(bid, ClientApplication.getApplicationClient()), AuctionRoomBidData.class.getName());
         NetworkResponse response = new NetworkResponse();
         ClientApplication.getSocketManager().send(msg, response);
 

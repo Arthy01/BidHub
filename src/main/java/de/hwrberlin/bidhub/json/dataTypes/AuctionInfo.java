@@ -3,7 +3,7 @@ package de.hwrberlin.bidhub.json.dataTypes;
 import java.util.concurrent.TimeUnit;
 
 public class AuctionInfo {
-    private final ProductInfo product;
+    private ProductInfo product;
     private final float startTime;
     private final TimeUnit timeUnit;
     private final float minimumIncrement;
@@ -68,5 +68,8 @@ public class AuctionInfo {
 
     public void setBidData(AuctionRoomBidData bidData) {
         this.bidData = bidData;
+    }
+    public void setProductID(long id){
+        product = new ProductInfo(product.title(), product.description(), product.seller(), id);
     }
 }

@@ -1,4 +1,6 @@
 package de.hwrberlin.bidhub.json.dataTypes;
 
-public record ProductInfo(String title, String description, String sellerUsername) {
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
+
+public record ProductInfo(String title, String description, ApplicationClient seller, long id) {
 }

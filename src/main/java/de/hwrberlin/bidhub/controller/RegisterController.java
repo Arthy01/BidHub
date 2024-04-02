@@ -1,8 +1,9 @@
 package de.hwrberlin.bidhub.controller;
 
 import de.hwrberlin.bidhub.ClientApplication;
-import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import de.hwrberlin.bidhub.model.client.LoginHandler;
+import de.hwrberlin.bidhub.model.client.RegisterHandler;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.StageManager;
 import javafx.event.ActionEvent;
@@ -14,27 +15,22 @@ import javafx.scene.input.KeyEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterController implements Initializable {
     @FXML
-    TextField fxUsername;
+    private TextField fxUsername;
     @FXML
-    TextField fxEmail;
+    private TextField fxEmail;
     @FXML
-    PasswordField fxPassword;
+    private PasswordField fxPassword;
     @FXML
     private Label fxErrorMsg;
     @FXML
     private Button fxRegister;
     @FXML
     private Hyperlink fxLogin;
-
-    private final LoginHandler handler = new LoginHandler();
-
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-    private final Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+    private final LoginHandler loginHandler = new LoginHandler();
+    private final RegisterHandler registerHandler = new RegisterHandler();
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -43,18 +39,15 @@ public class RegisterController implements Initializable {
         fxPassword.setOnKeyPressed(this::onPasswordKeyPressed);
     }
 
-    private boolean validateEmail(String email) {
-        Matcher matcher = emailPattern.matcher(email);
-        return matcher.matches();
-    }
-
     private void onRegisterButtonPressed(ActionEvent event) {
-        /*
-        if(validateEmail(fxEmail.getText()) && handler.validateLogin(fxUsername.getText(), fxPassword.getText())) {
-            register();
-        } else {
+        if(registerHandler.validateRegister(fxUsername.getText(), fxPassword.getText(), fxEmail.getText())) {
+            login();
+            System.out.println("REG");
+        }
+        else {
             fxErrorMsg.setVisible(true);
-        }*/
+            System.out.println("NOT!");
+        }
     }
 
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
@@ -64,10 +57,11 @@ public class RegisterController implements Initializable {
         }
     }
 
-    private void register() {
-        /*
-        ClientApplication.setApplicationClient(new ApplicationClient(fxUsername.getText()));
-        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);*/
+    private void login() {
+        ApplicationClient client = loginHandler.validateLogin(fxUsername.getText(), fxPassword.getText());
+
+        ClientApplication.setApplicationClient(client);
+        StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
     }
 
     private void onLoginLinkPressed(ActionEvent event) {

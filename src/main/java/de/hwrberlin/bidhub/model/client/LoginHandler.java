@@ -27,7 +27,6 @@ public class LoginHandler {
         new WaitForResponse(response);
 
         ApplicationClient data;
-
         try {
             data = response.getResponse().getData();
         } catch (Exception e) {

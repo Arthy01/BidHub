@@ -39,6 +39,7 @@ public class LoginController implements Initializable {
     private void onLoginButtonPressed(ActionEvent event) {
         ApplicationClient client = handler.validateLogin(fxUsername.getText(), fxPassword.getText());
         if (client != null){
+            System.out.println(client.getEmail());
             login(client);
         }
         else{

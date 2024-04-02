@@ -3,6 +3,7 @@ package de.hwrberlin.bidhub.model.shared;
 public enum CallbackType {
     Client_Response,
     Server_ValidateLogin,
+    Server_ValidateRegister,
     Server_CreateAuctionRoom,
     Server_GetIsInitiator,
     Server_GetAuctionRoomInfo,

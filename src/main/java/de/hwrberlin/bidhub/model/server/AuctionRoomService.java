@@ -345,6 +345,8 @@ public class AuctionRoomService {
         currentAuctionInfo = info;
         currentAuctionInfo.setBidData(null);
 
+        currentAuctionInfo.setProductID(ProductDAO.create(currentAuctionInfo.getProduct(), currentAuctionInfo.getMinimumBid(), currentAuctionInfo.getMinimumIncrement()));
+
         JsonMessage msg = new JsonMessage(CallbackType.Client_OnAuctionStarted.name(), currentAuctionInfo, AuctionInfo.class.getName());
         sendJsonToAllClients(msg.toJson());
         sendChatMessageToClients(new ChatMessageResponseData("Eine Auktion wurde gestartet!", "SYSTEM", Helpers.getCurrentTime(), true, ""));
@@ -355,8 +357,9 @@ public class AuctionRoomService {
         String bidInfo = " Kein Benutzer hat das Produkt ersteigert, da keine Gebote abgegeben wurden.";
 
         if (currentAuctionInfo.getBidData() != null){
-            username = currentAuctionInfo.getBidData().username();
+            username = currentAuctionInfo.getBidData().client().getUsername();
             bidInfo = " Der Benutzer " + username + " hat das Produkt für " + Helpers.formatToEuro(currentAuctionInfo.getBidData().bid()) + " ersteigert.";
+            ProductDAO.sell(currentAuctionInfo);
         }
 
         JsonMessage msg = new JsonMessage(CallbackType.Client_OnAuctionFinished.name());
@@ -380,7 +383,7 @@ public class AuctionRoomService {
 
             if (data.bid() >= currentBid + currentAuctionInfo.getMinimumIncrement() && data.bid() >= currentAuctionInfo.getMinimumBid()){
                 for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
-                    if (data.username().equals(entry.getValue().getUsername())){
+                    if (data.client().getUsername().equals(entry.getValue().getUsername())){
                         currentAuctionInfo.setBidData(data);
                         success = true;
                         break;
@@ -395,7 +398,7 @@ public class AuctionRoomService {
         context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
 
         if (success){
-            sendChatMessageToClients(new ChatMessageResponseData(data.username() + " hat ein Gebot abgegeben: " + Helpers.formatToEuro(data.bid()),
+            sendChatMessageToClients(new ChatMessageResponseData(data.client().getUsername() + " hat ein Gebot abgegeben: " + Helpers.formatToEuro(data.bid()),
                     "SYSTEM", Helpers.getCurrentTime(), true, ""));
 
             JsonMessage bidMsg = new JsonMessage(CallbackType.Client_OnBid.name(), data, AuctionRoomBidData.class.getName());

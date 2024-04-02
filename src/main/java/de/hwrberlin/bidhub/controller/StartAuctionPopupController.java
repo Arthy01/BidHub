@@ -96,7 +96,7 @@ public class StartAuctionPopupController {
             timeUnit = TimeUnit.SECONDS;
         }
 
-        return new AuctionInfo(new ProductInfo(title, description, ClientApplication.getApplicationClient().getUsername()),
+        return new AuctionInfo(new ProductInfo(title, description, ClientApplication.getApplicationClient(), -1),
                 startTime, timeUnit, minimumIncrement, minimumBid);
     }
 }
