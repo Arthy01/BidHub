@@ -3,6 +3,7 @@ package de.hwrberlin.bidhub.controller;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.FxmlRef;
+import de.hwrberlin.bidhub.util.StageManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -71,6 +72,9 @@ public class DashboardController implements Initializable {
         changeDashboardBody(FxmlFile.JoinAuction);
     }
 
+    private void onProfileButtonPressed(){
+        StageManager.createStage(FxmlFile.UserInformation, "Profil", true);
+    }
     private void changeDashboardBody(FxmlFile body){
         if (!dashboardBodies.containsKey(body)){
             System.out.println("Dashboard body " + body + " does not exist!");
