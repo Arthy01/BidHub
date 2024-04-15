@@ -11,5 +11,6 @@ public enum FxmlFile {
     AuctionRoomPreview,
     CreateAuction,
     StartAuctionPopup,
-    InfoPopup
+    InfoPopup,
+    RoomInformation
 }

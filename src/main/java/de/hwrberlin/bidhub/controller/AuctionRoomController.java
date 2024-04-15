@@ -107,6 +107,19 @@ public class AuctionRoomController {
             if (newValue.floatValue() < 1)
                 fxChatScrollPane.setVvalue(1);
         });
+
+        fxRoomInfo.setOnAction(this::openAuctionRoomInfo);
+    }
+
+    private void openAuctionRoomInfo(ActionEvent actionEvent) {
+        AuctionRoomInfo info = handler.getAuctionRoomInfo();
+        if (info == null){
+            System.out.println("Raum-Info kann nicht geöffnet werden, keine Daten vorhanden!");
+            return;
+        }
+
+        RoomInformationController controller = (RoomInformationController)StageManager.createPopup(FxmlFile.RoomInformation, "Rauminformationen").getKey();
+        controller.updateUI(info);
     }
 
     private void setupForInitiator(){
