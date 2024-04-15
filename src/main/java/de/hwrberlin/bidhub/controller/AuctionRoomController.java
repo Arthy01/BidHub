@@ -23,12 +23,6 @@ import javafx.stage.Stage;
 
 public class AuctionRoomController {
     @FXML
-    private HBox fxBalanceBox;
-    @FXML
-    private Label fxBalance;
-    @FXML
-    private Button fxRoomSettings;
-    @FXML
     private Button fxProfile;
     @FXML
     private Button fxLeaveRoom;
@@ -116,21 +110,15 @@ public class AuctionRoomController {
     }
 
     private void setupForInitiator(){
-        fxBalanceBox.setManaged(false);
-        fxBalanceBox.setVisible(false);
-
         fxBidBox.setManaged(false);
         fxBidBox.setVisible(false);
 
         fxLeaveRoom.setTooltip(new Tooltip("Raum schließen"));
-        fxRoomSettings.setTooltip(new Tooltip("Raum verwalten"));
 
         fxStartAuction.setOnAction(this::onStartAuctionButtonPressed);
     }
 
     private void setupForParticipant(){
-        fxRoomSettings.setManaged(false);
-        fxRoomSettings.setVisible(false);
         fxStartAuction.setManaged(false);
         fxStartAuction.setVisible(false);
 
