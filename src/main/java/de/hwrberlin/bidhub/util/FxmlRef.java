@@ -25,8 +25,8 @@ public abstract class FxmlRef {
             put(FxmlFile.CreateAuction, "fxml/DashboardBodies/CreateAuction.fxml");
             put(FxmlFile.StartAuctionPopup, "fxml/StartAuctionPopup.fxml");
             put(FxmlFile.InfoPopup, "fxml/InfoPopup.fxml");
-            put(FxmlFile.RoomInformation, "fxml/RoomInformation.fxml");
             put(FxmlFile.UserInformation, "fxml/UserInformation.fxml");
+            put(FxmlFile.RoomInformation, "fxml/RoomInformation.fxml");
         }
     };
 
