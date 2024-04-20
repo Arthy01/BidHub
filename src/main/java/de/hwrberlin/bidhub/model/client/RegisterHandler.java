@@ -13,15 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterHandler {
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-    private final Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
-
     public boolean validateRegister(String username, String password, String email) {
         if (password.isBlank())
             return false;
 
-        Matcher emailMatcher = emailPattern.matcher(email);
-        if (!emailMatcher.matches())
+        if (!Helpers.isEmailValid(email))
             return false;
 
         if (username.isBlank())

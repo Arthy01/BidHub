@@ -3,6 +3,7 @@ package de.hwrberlin.bidhub;
 import de.hwrberlin.bidhub.model.server.AuctionRoomManagerService;
 import de.hwrberlin.bidhub.model.server.LoginService;
 import de.hwrberlin.bidhub.model.server.SQL;
+import de.hwrberlin.bidhub.model.server.UserInformationService;
 
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ public class ServerApplication {
 
         LoginService loginService = new LoginService();
         AuctionRoomManagerService auctionRoomManagerService = new AuctionRoomManagerService();
+        UserInformationService userInformationService = new UserInformationService();
     }
 
     public static ServerSocketManager getSocketManager(){
