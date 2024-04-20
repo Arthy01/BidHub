@@ -1,9 +1,11 @@
 package de.hwrberlin.bidhub.controller;
 
+import de.hwrberlin.bidhub.util.Pair;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.util.FxmlFile;
 import de.hwrberlin.bidhub.util.FxmlRef;
 import de.hwrberlin.bidhub.util.StageManager;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -57,6 +60,12 @@ public class DashboardController implements Initializable {
         fxCreateAuction.setOnAction(e -> onCreateAuctionButtonPressed());
         fxJoinAuction.setOnAction(e -> onJoinAuctionButtonPressed());
         fxOverview.setOnAction(e -> onOverviewButtonPressed());
+        fxProfile.setOnAction(e -> onProfileButtonPressed());
+    }
+
+    private void onProfileButtonPressed(){
+        Pair<UserInformationController, Stage> controllerStagePair = StageManager.createPopup(FxmlFile.UserInformation, "Profil");
+        controllerStagePair.getKey().setup(controllerStagePair.getValue());
     }
 
     private void onOverviewButtonPressed(){
@@ -64,7 +73,6 @@ public class DashboardController implements Initializable {
     }
 
     private void onCreateAuctionButtonPressed(){
-        //dashboardHandler.createAuction("Test Auction Room", "Nur ein Test!", false);
         changeDashboardBody(FxmlFile.CreateAuction);
     }
 
@@ -72,9 +80,6 @@ public class DashboardController implements Initializable {
         changeDashboardBody(FxmlFile.JoinAuction);
     }
 
-    private void onProfileButtonPressed(){
-        StageManager.createStage(FxmlFile.UserInformation, "Profil", true);
-    }
     private void changeDashboardBody(FxmlFile body){
         if (!dashboardBodies.containsKey(body)){
             System.out.println("Dashboard body " + body + " does not exist!");
