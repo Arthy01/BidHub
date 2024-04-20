@@ -150,3 +150,7 @@
     -fx-font-size: 30px;
     -fx-font-weight: bold;
 }
+
+.table-view .content {
+    -fx-background-color: white; /* Dies sollte den Inhalt der Tabelle weiß färben */
+}

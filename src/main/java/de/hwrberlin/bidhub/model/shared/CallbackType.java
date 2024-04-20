@@ -24,5 +24,6 @@ public enum CallbackType {
     Client_OnBid,
     Server_GetAuctionInfoRequest,
     Server_GetUserInformationRequest,
-    Server_UpdateUserInformationRequest
+    Server_UpdateUserInformationRequest,
+    Server_GetTransactionRequest
 }

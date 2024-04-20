@@ -1,42 +1,85 @@
 package de.hwrberlin.bidhub.controller;
 
-import de.hwrberlin.bidhub.model.client.Transactions;
+import de.hwrberlin.bidhub.ClientApplication;
+import de.hwrberlin.bidhub.json.dataTypes.TransactionData;
+import de.hwrberlin.bidhub.model.client.OverviewModel;
+import de.hwrberlin.bidhub.model.server.TransactionDAO;
+import de.hwrberlin.bidhub.model.shared.ApplicationClient;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.ArrayList;
 
 public class OverviewController {
 
     @FXML
-    private TableView<String> kaufeTable;
+    private TableView<TransactionData> kaufeTable;
+    @FXML
+    private TableColumn<TransactionData, String> kaufeProduktColumn;
+    @FXML
+    private TableColumn<TransactionData, Double> kaufePreisColumn;
+    @FXML
+    private TableColumn<TransactionData, String> kaufeVerkaeuferColumn;
 
     @FXML
-    private TableView<String> verkaufeTable;
+    private TableView<TransactionData> verkaufeTable;
+    @FXML
+    private TableColumn<TransactionData, String> verkaufeProduktColumn;
+    @FXML
+    private TableColumn<TransactionData, Double> verkaufePreisColumn;
+    @FXML
+    private TableColumn<TransactionData, String> verkaufeKaeuferColumn;
+
+    private final OverviewModel handler = new OverviewModel();
+
 
     @FXML
     public void initialize() {
         adjustColumnWidths(kaufeTable);
         adjustColumnWidths(verkaufeTable);
-    /*
-        kaufeTable.getItems().addAll(
-                new Transactions("Laptop", "1200€", "Alice"),
-                new Transactions("Smartphone", "800€", "Bob")
-        );
-        verkaufeTable.getItems().addAll(
-                new Transactions("Fahrrad", "150€", "Charlie"),
-                new Transactions("Kaffeemaschine", "90€", "Dana")
-        );
-    */
-
+        setupTable();
     }
 
-    public void fillUserInformation() {
-        String testUsername = "test";
-        String testIBAN = "test_iban";
-        ObservableList<String> test = FXCollections.observableArrayList("test");
-        //kaufeTable.setItems(test);
+    private void setupTable() {
+        kaufeProduktColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().produktName()));
+        kaufePreisColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().preis()));
+        kaufeVerkaeuferColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
+
+        verkaufeProduktColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().produktName()));
+        verkaufePreisColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().preis()));
+        verkaufeKaeuferColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
+
+        //loadKaufeData();
+        //loadVerkaufeData();
+        loadTransactions();
+    }
+
+    private void loadTransactions() {
+        ArrayList<TransactionData> transactions = handler.getTransactionData();
+        ObservableList<TransactionData> observableTransactions = FXCollections.observableArrayList(transactions);
+        //kaufeTable.setItems(observableTransactions);
+    }
+
+
+    private void loadKaufeData() {
+        ObservableList<TransactionData> data = FXCollections.observableArrayList(
+                new TransactionData(1, "Verkäufer1", "Produkt1", 20.0),
+                new TransactionData(2, "Verkäufer2", "Produkt2", 35.0)
+        );
+        kaufeTable.setItems(data);
+    }
+    private void loadVerkaufeData() {
+        ObservableList<TransactionData> data = FXCollections.observableArrayList(
+                new TransactionData(1, "Käufer1", "Produkt1", 20.0),
+                new TransactionData(2, "Käufer2", "Produkt2", 35.0)
+        );
+        verkaufeTable.setItems(data);
     }
 
 

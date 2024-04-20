@@ -19,17 +19,16 @@
                 <Label text="Verkäufe" styleClass="header-label" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
                 <TableView fx:id="kaufeTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="Produkt" fx:id="kaufeProduktColumn" cellValueFactory="${cellData -> cellData.getValue().produkt}" />
-                        <TableColumn text="Preis" fx:id="kaufePreisColumn" cellValueFactory="${cellData -> cellData.getValue().preis}" />
-                        <TableColumn text="Verkäufer" fx:id="kaufeVerkaeuferColumn" cellValueFactory="${cellData -> cellData.getValue().person}" />
-
+                        <TableColumn text="Produkt" fx:id="kaufeProduktColumn" />
+                        <TableColumn text="Preis" fx:id="kaufePreisColumn" />
+                        <TableColumn text="Verkäufer" fx:id="kaufeVerkaeuferColumn"/>
                     </columns>
                 </TableView>
                 <TableView fx:id="verkaufeTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="Produkt" />
-                        <TableColumn text="Preis" />
-                        <TableColumn text="Käufer" />
+                        <TableColumn text="Produkt" fx:id="verkaufeProduktColumn" />
+                        <TableColumn text="Preis" fx:id="verkaufePreisColumn" />
+                        <TableColumn text="Käufer" fx:id="verkaufeKaeuferColumn" />
                     </columns>
                 </TableView>
             </children>
