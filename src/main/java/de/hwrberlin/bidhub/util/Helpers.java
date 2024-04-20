@@ -6,8 +6,13 @@ import java.text.NumberFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class Helpers {
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    private static final Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
+
     public static String hashPassword(String password){
         if (password.isBlank())
             return "";
@@ -59,5 +64,21 @@ public abstract class Helpers {
         format.setMaximumFractionDigits(2);
 
         return format.format(number) + " €";
+    }
+
+    public static boolean isEmailValid(String email){
+        Matcher emailMatcher = emailPattern.matcher(email);
+        return emailMatcher.matches();
+    }
+
+    public static boolean isIBANValid(String iban) {
+        if (iban == null) {
+            return false;
+        }
+
+        iban = iban.replaceAll("\\s", "");
+        String regex = "^[A-Z]{2}\\d{2}[A-Z0-9]{11,29}$";
+
+        return iban.matches(regex);
     }
 }
