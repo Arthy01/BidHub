@@ -23,12 +23,6 @@ import javafx.stage.Stage;
 
 public class AuctionRoomController {
     @FXML
-    private HBox fxBalanceBox;
-    @FXML
-    private Label fxBalance;
-    @FXML
-    private Button fxRoomSettings;
-    @FXML
     private Button fxProfile;
     @FXML
     private Button fxLeaveRoom;
@@ -113,24 +107,31 @@ public class AuctionRoomController {
             if (newValue.floatValue() < 1)
                 fxChatScrollPane.setVvalue(1);
         });
+
+        fxRoomInfo.setOnAction(this::openAuctionRoomInfo);
+    }
+
+    private void openAuctionRoomInfo(ActionEvent actionEvent) {
+        AuctionRoomInfo info = handler.getAuctionRoomInfo();
+        if (info == null){
+            System.out.println("Raum-Info kann nicht geöffnet werden, keine Daten vorhanden!");
+            return;
+        }
+
+        RoomInformationController controller = (RoomInformationController)StageManager.createPopup(FxmlFile.RoomInformation, "Rauminformationen").getKey();
+        controller.updateUI(info);
     }
 
     private void setupForInitiator(){
-        fxBalanceBox.setManaged(false);
-        fxBalanceBox.setVisible(false);
-
         fxBidBox.setManaged(false);
         fxBidBox.setVisible(false);
 
         fxLeaveRoom.setTooltip(new Tooltip("Raum schließen"));
-        fxRoomSettings.setTooltip(new Tooltip("Raum verwalten"));
 
         fxStartAuction.setOnAction(this::onStartAuctionButtonPressed);
     }
 
     private void setupForParticipant(){
-        fxRoomSettings.setManaged(false);
-        fxRoomSettings.setVisible(false);
         fxStartAuction.setManaged(false);
         fxStartAuction.setVisible(false);
 
