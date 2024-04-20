@@ -24,7 +24,7 @@ public class OverviewModel {
         try {
             transactionResponse = response.getResponse().getData();
         } catch (Exception e) {
-            System.out.println("Callback auf dem Server nicht registriert!");
+            System.out.println("Konnte Transaktions Daten nicht umwandeln!");
             throw new RuntimeException(e);
         }
         return transactionResponse.transactionData();

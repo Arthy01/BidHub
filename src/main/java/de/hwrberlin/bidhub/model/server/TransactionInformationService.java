@@ -29,6 +29,6 @@ public class TransactionInformationService {
         ArrayList<TransactionData> trans = TransactionDAO.getAllTransactionInformation(data.senderID());
         TransactionResponseData response = new TransactionResponseData(trans);
 
-        context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), trans, TransactionResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
+        context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), response, TransactionResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 }

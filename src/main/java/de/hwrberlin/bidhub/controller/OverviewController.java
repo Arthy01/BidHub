@@ -15,6 +15,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class OverviewController {
 
@@ -62,8 +63,27 @@ public class OverviewController {
 
     private void loadTransactions() {
         ArrayList<TransactionData> transactions = handler.getTransactionData();
-        ObservableList<TransactionData> observableTransactions = FXCollections.observableArrayList(transactions);
-        //kaufeTable.setItems(observableTransactions);
+
+        ArrayList<TransactionData> transactions_kauf = new ArrayList<>();
+        ArrayList<TransactionData> transactions_verkauf = new ArrayList<>();
+
+
+        long cachedId = ClientApplication.getApplicationClient().getId();
+
+        for (TransactionData transactionData : transactions){
+            if (transactionData.sellerID() == cachedId){
+                transactions_verkauf.add(transactionData);
+            }
+            else{
+                transactions_kauf.add(transactionData);
+            }
+        }
+
+        ObservableList<TransactionData> observableTransactions_kauf = FXCollections.observableArrayList(transactions_kauf);
+        ObservableList<TransactionData> observableTransactions_verkauf = FXCollections.observableArrayList(transactions_verkauf);
+
+        kaufeTable.setItems(observableTransactions_kauf);
+        verkaufeTable.setItems(observableTransactions_verkauf);
     }
 
 
