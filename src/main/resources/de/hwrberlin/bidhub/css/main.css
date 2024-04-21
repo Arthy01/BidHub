@@ -125,3 +125,32 @@
     -fx-text-fill: #1e4974; /* Dunkelblauer Text für die Einträge im Dropdown */
     -fx-padding: 5px; /* Etwas Padding für die Listeneinträge */
 }
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background .label {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.table-view .table-cell {
+    -fx-border-color: black;
+    -fx-border-width: 0 0 1 1;
+}
+
+.table-row-cell {
+    -fx-cell-size: 24px;
+}
+
+.header-label {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.table-view .content {
+    -fx-background-color: white; /* Dies sollte den Inhalt der Tabelle weiß färben */
+}

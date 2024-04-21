@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -34,13 +33,9 @@
                         <Button fx:id="fxOverview" alignment="CENTER" layoutX="10.0" layoutY="85.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Überblick" />
                         <Button fx:id="fxCreateAuction" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Auktion erstellen" />
                         <Button fx:id="fxJoinAuction" alignment="CENTER" layoutX="10.0" layoutY="190.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Auktion beitreten" />
-                        <Separator focusTraversable="false" prefWidth="200.0" />
-                        <Button alignment="CENTER" layoutX="10.0" layoutY="215.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Käufe" />
-                        <Button alignment="CENTER" layoutX="10.0" layoutY="240.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" styleClass="dashboard-button" text="Verkäufe" />
-                     </children>
+                        </children>
                   </VBox>
-                  <Separator focusTraversable="false" orientation="VERTICAL" prefHeight="150.0" visible="false" />
-               </children>
+                  </children>
                <padding>
                   <Insets bottom="25.0" top="25.0" />
                </padding>

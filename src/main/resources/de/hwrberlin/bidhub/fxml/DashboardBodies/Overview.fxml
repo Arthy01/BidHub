@@ -1,10 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../css/main.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.OverviewController">
-   <children>
-      <Label styleClass="h2" text="Overview - Coming Soon" />
-   </children>
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../css/main.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.hwrberlin.bidhub.controller.OverviewController">
+    <children>
+        <GridPane prefHeight="109.0" prefWidth="560.0" hgap="10" vgap="10" alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50" hgrow="SOMETIMES" />
+                <ColumnConstraints percentWidth="50" hgrow="SOMETIMES" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="264.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="Käufe" styleClass="header-label" GridPane.columnIndex="0" GridPane.halignment="CENTER" />
+                <Label text="Verkäufe" styleClass="header-label" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                <TableView fx:id="purchasesTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Produkt" fx:id="purchasesProductColumn" />
+                        <TableColumn text="Preis" fx:id="purchasesPriceColumn" />
+                        <TableColumn text="Verkäufer" fx:id="purchasesSellerColumn"/>
+                    </columns>
+                </TableView>
+                <TableView fx:id="salesTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Produkt" fx:id="salesProductColumn" />
+                        <TableColumn text="Preis" fx:id="salesPriceColumn" />
+                        <TableColumn text="Käufer" fx:id="salesBuyerColumn" />
+                    </columns>
+                </TableView>
+            </children>
+        </GridPane>
+    </children>
 </VBox>
