@@ -15,7 +15,7 @@ public class TransactionDAO {
         String query = "SELECT tr.Seller, tr.Sale_Price, li.Username As Seller_Username, pr.Product_Name , li_.Username As Buyer_Username " +
                 "FROM Transactions tr " +
                 "JOIN Login_Information li ON li.User_ID = tr.Seller " +
-                "JOIN Login_Information li_ ON li.User_ID = tr.Buyer " +
+                "JOIN Login_Information li_ ON li_.User_ID = tr.Buyer " +
                 "JOIN Product pr ON pr.Product_ID = tr.Product_ID " +
                 "WHERE tr.Seller = ? OR tr.Buyer = ?";
 
