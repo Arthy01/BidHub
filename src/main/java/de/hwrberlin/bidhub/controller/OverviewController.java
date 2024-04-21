@@ -3,8 +3,6 @@ package de.hwrberlin.bidhub.controller;
 import de.hwrberlin.bidhub.ClientApplication;
 import de.hwrberlin.bidhub.json.dataTypes.TransactionData;
 import de.hwrberlin.bidhub.model.client.OverviewModel;
-import de.hwrberlin.bidhub.model.server.TransactionDAO;
-import de.hwrberlin.bidhub.model.shared.ApplicationClient;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -12,10 +10,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class OverviewController {
 
@@ -56,8 +52,6 @@ public class OverviewController {
         verkaufePreisColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().preis()));
         verkaufeKaeuferColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
 
-        //loadKaufeData();
-        //loadVerkaufeData();
         loadTransactions();
     }
 
@@ -84,22 +78,6 @@ public class OverviewController {
 
         kaufeTable.setItems(observableTransactions_kauf);
         verkaufeTable.setItems(observableTransactions_verkauf);
-    }
-
-
-    private void loadKaufeData() {
-        ObservableList<TransactionData> data = FXCollections.observableArrayList(
-                new TransactionData(1, "Verkäufer1", "Produkt1", 20.0),
-                new TransactionData(2, "Verkäufer2", "Produkt2", 35.0)
-        );
-        kaufeTable.setItems(data);
-    }
-    private void loadVerkaufeData() {
-        ObservableList<TransactionData> data = FXCollections.observableArrayList(
-                new TransactionData(1, "Käufer1", "Produkt1", 20.0),
-                new TransactionData(2, "Käufer2", "Produkt2", 35.0)
-        );
-        verkaufeTable.setItems(data);
     }
 
 
