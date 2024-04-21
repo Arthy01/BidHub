@@ -21,7 +21,7 @@ public class TransactionInformationService {
         try{
            data = context.message().getData();
         } catch (Exception e) {
-            System.out.println("Falsche Daten! (TransactionInformationService)");
+            System.out.println("Wrong data! (TransactionInformationService)");
             context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), null, TransactionResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
             return;
         }

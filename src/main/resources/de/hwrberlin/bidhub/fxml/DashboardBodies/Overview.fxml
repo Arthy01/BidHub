@@ -17,18 +17,18 @@
             <children>
                 <Label text="Käufe" styleClass="header-label" GridPane.columnIndex="0" GridPane.halignment="CENTER" />
                 <Label text="Verkäufe" styleClass="header-label" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
-                <TableView fx:id="kaufeTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                <TableView fx:id="purchasesTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="Produkt" fx:id="kaufeProduktColumn" />
-                        <TableColumn text="Preis" fx:id="kaufePreisColumn" />
-                        <TableColumn text="Verkäufer" fx:id="kaufeVerkaeuferColumn"/>
+                        <TableColumn text="Produkt" fx:id="purchasesProductColumn" />
+                        <TableColumn text="Preis" fx:id="purchasesPriceColumn" />
+                        <TableColumn text="Verkäufer" fx:id="purchasesSellerColumn"/>
                     </columns>
                 </TableView>
-                <TableView fx:id="verkaufeTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                <TableView fx:id="salesTable" prefHeight="264.0" prefWidth="200.0" styleClass="text-area" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="Produkt" fx:id="verkaufeProduktColumn" />
-                        <TableColumn text="Preis" fx:id="verkaufePreisColumn" />
-                        <TableColumn text="Käufer" fx:id="verkaufeKaeuferColumn" />
+                        <TableColumn text="Produkt" fx:id="salesProductColumn" />
+                        <TableColumn text="Preis" fx:id="salesPriceColumn" />
+                        <TableColumn text="Käufer" fx:id="salesBuyerColumn" />
                     </columns>
                 </TableView>
             </children>

@@ -24,7 +24,7 @@ public class OverviewModel {
         try {
             transactionResponse = response.getResponse().getData();
         } catch (Exception e) {
-            System.out.println("Konnte Transaktions Daten nicht umwandeln!");
+            System.out.println("Could not convert transaction data!");
             throw new RuntimeException(e);
         }
         return transactionResponse.transactionData();

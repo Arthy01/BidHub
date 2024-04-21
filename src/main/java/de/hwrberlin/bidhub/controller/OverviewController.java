@@ -16,41 +16,41 @@ import java.util.ArrayList;
 public class OverviewController {
 
     @FXML
-    private TableView<TransactionData> kaufeTable;
+    private TableView<TransactionData> purchasesTable;
     @FXML
-    private TableColumn<TransactionData, String> kaufeProduktColumn;
+    private TableColumn<TransactionData, String> purchasesProductColumn;
     @FXML
-    private TableColumn<TransactionData, Double> kaufePreisColumn;
+    private TableColumn<TransactionData, Double> purchasesPriceColumn;
     @FXML
-    private TableColumn<TransactionData, String> kaufeVerkaeuferColumn;
+    private TableColumn<TransactionData, String> purchasesSellerColumn;
 
     @FXML
-    private TableView<TransactionData> verkaufeTable;
+    private TableView<TransactionData> salesTable;
     @FXML
-    private TableColumn<TransactionData, String> verkaufeProduktColumn;
+    private TableColumn<TransactionData, String> salesProductColumn;
     @FXML
-    private TableColumn<TransactionData, Double> verkaufePreisColumn;
+    private TableColumn<TransactionData, Double> salesPriceColumn;
     @FXML
-    private TableColumn<TransactionData, String> verkaufeKaeuferColumn;
+    private TableColumn<TransactionData, String> salesBuyerColumn;
 
     private final OverviewModel handler = new OverviewModel();
 
 
     @FXML
     public void initialize() {
-        adjustColumnWidths(kaufeTable);
-        adjustColumnWidths(verkaufeTable);
+        adjustColumnWidths(purchasesTable);
+        adjustColumnWidths(salesTable);
         setupTable();
     }
 
     private void setupTable() {
-        kaufeProduktColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().produktName()));
-        kaufePreisColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().preis()));
-        kaufeVerkaeuferColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
+        purchasesProductColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().productName()));
+        purchasesPriceColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().price()));
+        purchasesSellerColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
 
-        verkaufeProduktColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().produktName()));
-        verkaufePreisColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().preis()));
-        verkaufeKaeuferColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
+        salesProductColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().productName()));
+        salesPriceColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().price()));
+        salesBuyerColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
 
         loadTransactions();
     }
@@ -58,26 +58,26 @@ public class OverviewController {
     private void loadTransactions() {
         ArrayList<TransactionData> transactions = handler.getTransactionData();
 
-        ArrayList<TransactionData> transactions_kauf = new ArrayList<>();
-        ArrayList<TransactionData> transactions_verkauf = new ArrayList<>();
+        ArrayList<TransactionData> transactions_purchase = new ArrayList<>();
+        ArrayList<TransactionData> transactions_sales = new ArrayList<>();
 
 
         long cachedId = ClientApplication.getApplicationClient().getId();
 
         for (TransactionData transactionData : transactions){
             if (transactionData.sellerID() == cachedId){
-                transactions_verkauf.add(transactionData);
+                transactions_sales.add(transactionData);
             }
             else{
-                transactions_kauf.add(transactionData);
+                transactions_purchase.add(transactionData);
             }
         }
 
-        ObservableList<TransactionData> observableTransactions_kauf = FXCollections.observableArrayList(transactions_kauf);
-        ObservableList<TransactionData> observableTransactions_verkauf = FXCollections.observableArrayList(transactions_verkauf);
+        ObservableList<TransactionData> observableTransactions_purchase = FXCollections.observableArrayList(transactions_purchase);
+        ObservableList<TransactionData> observableTransactions_sales = FXCollections.observableArrayList(transactions_sales);
 
-        kaufeTable.setItems(observableTransactions_kauf);
-        verkaufeTable.setItems(observableTransactions_verkauf);
+        purchasesTable.setItems(observableTransactions_purchase);
+        salesTable.setItems(observableTransactions_sales);
     }
 
 
