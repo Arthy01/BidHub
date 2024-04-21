@@ -4,6 +4,7 @@ import de.hwrberlin.bidhub.model.shared.UserInformation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class UserInformationDAO {
     public static UserInformation create(long id) {
@@ -38,23 +39,33 @@ public class UserInformationDAO {
     }
 
     public static boolean update(UserInformation data) {
-        String sql = "UPDATE User_Information ui " +
-                "JOIN Address a ON ui.User_ID = a.User_ID " +
-                "SET ui.Email_Address = ?, ui.First_Name = ?, ui.Last_Name = ?, ui.IBAN = ?, " +
-                "a.Country = ?, a.Street = ?, a.House_Number = ?, a.Postal_Code = ?, a.City = ? " +
-                "WHERE ui.User_ID = ?";
+        String sql1 = "UPDATE User_Information " +
+                "SET Email_Address = ?, First_Name = ?, Last_Name = ?, IBAN = ? " +
+                "WHERE User_ID = ?";
 
-        boolean success = SQL.update(sql,
-                data.email(),
-                data.firstname(),
-                data.lastname(),
-                data.iban(),
-                data.country(),
-                data.street(),
-                data.streetnumber(),
-                data.postcode(),
-                data.city(),
-                data.id()
+        String sql2 = "UPDATE Address " +
+                "SET Country = ?, Street = ?, House_Number = ?, Postal_Code = ?, City = ? " +
+                "WHERE User_ID = ?";
+
+        boolean success = SQL.updateTransaction(
+                Arrays.asList(sql1, sql2),
+                Arrays.asList(
+                    Arrays.asList(
+                            data.email(),
+                            data.firstname(),
+                            data.lastname(),
+                            data.iban(),
+                            data.id()
+                    ),
+                    Arrays.asList(
+                            data.country(),
+                            data.street(),
+                            data.streetnumber(),
+                            data.postcode(),
+                            data.city(),
+                            data.id()
+                    )
+                )
         );
 
         if (success) {

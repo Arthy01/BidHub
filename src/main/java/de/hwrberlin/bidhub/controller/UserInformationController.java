@@ -115,25 +115,25 @@ public class UserInformationController {
         if (!Helpers.isIBANValid(fxIban.getText()))
             return false;
 
-        if (fxFirstname.getText().isBlank())
+        if (fxFirstname.getText() == null || fxFirstname.getText().isBlank())
             return false;
 
-        if (fxLastname.getText().isBlank())
+        if (fxLastname.getText() == null || fxLastname.getText().isBlank())
             return false;
 
-        if (fxCountry.getText().isBlank())
+        if (fxCountry.getText() == null || fxCountry.getText().isBlank())
             return false;
 
-        if (fxStreet.getText().isBlank())
+        if (fxStreet.getText() == null || fxStreet.getText().isBlank())
             return false;
 
-        if (fxStreetnumber.getText().isBlank())
+        if (fxStreetnumber.getText() == null || fxStreetnumber.getText().isBlank())
             return false;
 
-        if (fxPostcode.getText().isBlank())
+        if (fxPostcode.getText() == null || fxPostcode.getText().isBlank())
             return false;
 
-        if (fxCity.getText().isBlank())
+        if (fxCity.getText() == null || fxCity.getText().isBlank())
             return false;
 
         return true;

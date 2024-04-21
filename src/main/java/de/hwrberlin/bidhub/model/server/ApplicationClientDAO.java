@@ -36,24 +36,14 @@ public abstract class ApplicationClientDAO {
         return SQL.updateTransaction(
                 Arrays.asList(
                         "INSERT INTO Login_Information(Username, Password) VALUES(?, ?)",
-                        "INSERT INTO User_Information (User_ID, Email_Address) VALUES (LAST_INSERT_ID(), ?);"
+                        "INSERT INTO User_Information (User_ID, Email_Address) VALUES (LAST_INSERT_ID(), ?);",
+                        "INSERT INTO Address (User_ID) VALUES (LAST_INSERT_ID())"
                 ),
                 Arrays.asList(
                         Arrays.asList(username, hashedPassword),
-                        Arrays.asList(email)
+                        Arrays.asList(email),
+                        Arrays.asList()
                 )
         );
-    }
-
-    public static boolean updateFirstName(long userId, String firstName){
-        return SQL.update("UPDATE User_Information SET First_Name = ? WHERE User_ID = ?", firstName, userId);
-    }
-
-    public static boolean updateLastName(long userId, String lastName){
-        return SQL.update("UPDATE User_Information SET Last_Name = ? WHERE User_ID = ?", lastName, userId);
-    }
-
-    public static boolean updateIban(long userId, String iban){
-        return SQL.update("UPDATE User_Information SET IBAN = ? WHERE User_ID = ?", iban, userId);
     }
 }
