@@ -50,7 +50,7 @@ public class OverviewController {
 
         salesProductColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().productName()));
         salesPriceColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().price()));
-        salesBuyerColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().sellerUsername()));
+        salesBuyerColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().buyerUsername()));
 
         loadTransactions();
     }
