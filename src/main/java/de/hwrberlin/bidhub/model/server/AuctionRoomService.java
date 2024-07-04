@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Verwaltet einen Auktionsraum, einschließlich der Registrierung von Clients, dem Senden von Chat-Nachrichten,
+ * der Verwaltung von Auktionen und dem Handhaben von Client-Aktionen wie Beitritt, Verlassen, Bieten und mehr.
+ */
 public class AuctionRoomService {
     private volatile boolean isStarted = false;
     private final HashMap<WebSocket, ClientInfo> registeredClients = new HashMap<>();
@@ -24,10 +28,19 @@ public class AuctionRoomService {
 
     private AuctionInfo currentAuctionInfo = null;
 
+    /**
+     * Konstruktor, der eine neue Instanz eines Auktionsraums mit spezifischen Informationen initialisiert.
+     *
+     * @param info Die Informationen des Auktionsraums, einschließlich ID, Titel, Beschreibung und Passwort.
+     */
     public AuctionRoomService(AuctionRoomInfo info){
         this.info = info;
     }
 
+    /**
+     * Startet den Auktionsraum, indem der Lebenszyklus-Thread initialisiert und Callbacks registriert werden.
+     * Markiert den Auktionsraum als gestartet und informiert über den Öffnungsstatus.
+     */
     public synchronized void start() {
         isStarted = true;
         handleLifecycle();
@@ -35,6 +48,10 @@ public class AuctionRoomService {
         System.out.println("Auction Room " + info.getId() + " wurde geöffnet!");
     }
 
+    /**
+     * Verwaltet den Lebenszyklus des Auktionsraums in einem separaten Thread.
+     * Führt periodische Aktionen aus, solange der Auktionsraum aktiv ist.
+     */
     private void handleLifecycle(){
         new Thread(() -> {
             while (isStarted){
@@ -51,14 +68,27 @@ public class AuctionRoomService {
         }).start();
     }
 
+    /**
+     * Gibt den Initiator des Auktionsraums zurück.
+     *
+     * @return Ein Paar aus WebSocket und ClientInfo des Initiators.
+     */
     public synchronized Pair<WebSocket, ClientInfo> getInitiator() {
         return initiator;
     }
 
+    /**
+     * Gibt die Informationen des Auktionsraums zurück.
+     *
+     * @return Die Informationen des Auktionsraums.
+     */
     public synchronized AuctionRoomInfo getInfo() {
         return info;
     }
 
+    /**
+     * Registriert Callbacks für verschiedene Aktionen und Anfragen, die im Auktionsraum auftreten können.
+     */
     private void registerCallbacks(){
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_ReceiveChatMessageFromClient.name() + info.getId(), this::receiveChatMessageFromClient);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_UnregisterClient.name() + info.getId(), this::unregisterClient);
@@ -73,6 +103,9 @@ public class AuctionRoomService {
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetAuctionInfoRequest.name() + info.getId(), this::onGetAuctionInfoRequest);
     }
 
+    /**
+     * Hebt die Registrierung aller Callbacks auf, die für den Auktionsraum gesetzt wurden.
+     */
     private void unregisterCallbacks(){
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_ReceiveChatMessageFromClient.name() + info.getId());
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_UnregisterClient.name() + info.getId());
@@ -87,6 +120,10 @@ public class AuctionRoomService {
         ServerApplication.getSocketManager().unregisterCallback(CallbackType.Server_GetAuctionInfoRequest.name() + info.getId());
     }
 
+    /**
+     * Stoppt den Auktionsraum, informiert alle registrierten Clients über die Schließung,
+     * hebt die Registrierung von Callbacks auf und führt alle hinterlegten Schließungshooks aus.
+     */
     public synchronized void stop(){
         isStarted = false;
 
@@ -105,6 +142,12 @@ public class AuctionRoomService {
         System.out.println("Auction Room " + info.getId() + " wurde geschlossen!");
     }
 
+    /**
+     * Registriert einen Client im Auktionsraum, überprüft, ob der Client gebannt ist, und fügt ihn hinzu,
+     * wenn er nicht gebannt ist. Sendet eine Bestätigungsnachricht an den Client.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält Informationen über die Nachricht und die Verbindung.
+     */
     public synchronized void registerClient(CallbackContext context){
         AuctionRoomRegisterClientRequestData data;
         try {
@@ -145,6 +188,11 @@ public class AuctionRoomService {
         System.out.println("Client " + clientInfo.getUsername() + " ist dem Auction Room " + info.getId() + " beigetreten.");
     }
 
+    /**
+     * Entfernt einen Client aus dem Auktionsraum und informiert andere Clients über das Verlassen.
+     *
+     * @param clientInfo Die Informationen des Clients, der den Auktionsraum verlässt.
+     */
     private synchronized void unregisterClient(ClientInfo clientInfo){
         registeredClients.remove(clientInfo.getConnection());
         info.removeClient(clientInfo.getUsername());
@@ -167,6 +215,11 @@ public class AuctionRoomService {
         }
     }
 
+    /**
+     * Entfernt einen Client aus dem Auktionsraum und informiert andere Clients über das Verlassen.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält Informationen über die Nachricht und die Verbindung.
+     */
     public synchronized void unregisterClient (CallbackContext context){
         ClientInfo clientInfo = getClientInfoByConnection(context.conn());
 
@@ -178,6 +231,11 @@ public class AuctionRoomService {
         unregisterClient(clientInfo);
     }
 
+    /**
+     * Überprüft das Passwort für den Zugang zum Auktionsraum und sendet eine Erfolgs- oder Fehlermeldung zurück.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält Informationen über die Nachricht und die Verbindung.
+     */
     private synchronized void validatePasswordRequest(CallbackContext context){
         AuctionRoomPasswordValidationRequestData data;
         boolean success = false;
@@ -192,6 +250,11 @@ public class AuctionRoomService {
         context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
     }
 
+    /**
+     * Empfängt eine Chat-Nachricht von einem Client und sendet sie an alle anderen Clients im Auktionsraum.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält Informationen über die Nachricht und die Verbindung.
+     */
     public synchronized void receiveChatMessageFromClient(CallbackContext context){
         ChatMessageRequestData data;
         try {
@@ -212,6 +275,11 @@ public class AuctionRoomService {
         sendChatMessageToClients(responseData);
     }
 
+    /**
+     * Sendet eine Chat-Nachricht an alle Clients im Auktionsraum.
+     *
+     * @param messageResponseData Die Daten der Chat-Nachricht, die gesendet werden soll.
+     */
     private synchronized void sendChatMessageToClients(ChatMessageResponseData messageResponseData){
         for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
             if (messageResponseData.recipient().isBlank() ||
@@ -224,10 +292,21 @@ public class AuctionRoomService {
         System.out.println("Chat Nachricht im Auction Room " + info.getId() + " vom Client " + messageResponseData.senderUsername() + " gesendet. (Privatnachricht: " + !messageResponseData.recipient().isBlank() + ")");
     }
 
+    /**
+     * Ermittelt die Client-Informationen basierend auf der WebSocket-Verbindung.
+     *
+     * @param conn Die WebSocket-Verbindung des Clients.
+     * @return Die Informationen des Clients oder null, wenn der Client nicht gefunden wurde.
+     */
     private synchronized ClientInfo getClientInfoByConnection(WebSocket conn){
         return registeredClients.get(conn);
     }
 
+    /**
+     * Wird periodisch aufgerufen, um den Zustand der aktuellen Auktion zu aktualisieren.
+     * Überprüft, ob die Auktion noch läuft und aktualisiert die verbleibende Zeit.
+     * Beendet die Auktion, wenn die Zeit abgelaufen ist.
+     */
     private synchronized void onTick(){
         if (currentAuctionInfo == null)
             return;
@@ -243,10 +322,22 @@ public class AuctionRoomService {
         }
     }
 
+    /**
+     * Fügt einen Hook hinzu, der ausgeführt wird, wenn der Auktionsraum geschlossen wird.
+     * Dies ermöglicht es, benutzerdefinierte Aktionen vor dem endgültigen Schließen des Raums durchzuführen.
+     *
+     * @param hook Der auszuführende Hook (Codeblock) beim Schließen des Raums.
+     */
     public synchronized void addCloseRoomHook(Runnable hook){
         closeRoomHooks.add(hook);
     }
 
+    /**
+     * Verarbeitet eine Anfrage, um zu überprüfen, ob der anfragende Client der Initiator des Auktionsraums ist.
+     * Sendet eine Antwort mit dem Ergebnis zurück an den Client.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung.
+     */
     private synchronized void getInitiatorRequest(CallbackContext context){
         WebSocket initiator = getInitiator().getKey();
 
@@ -254,10 +345,22 @@ public class AuctionRoomService {
         context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), responseData, SuccessResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 
+    /**
+     * Verarbeitet eine Anfrage, um Informationen über den Auktionsraum zu erhalten.
+     * Sendet die Informationen des Auktionsraums als Antwort zurück an den Client.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung.
+     */
     private synchronized void getAuctionRoomInfoRequest(CallbackContext context){
         context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), getInfo(), AuctionRoomInfo.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 
+    /**
+     * Verarbeitet eine Anfrage, um einen Benutzer aus dem Auktionsraum zu entfernen (kick).
+     * Kann nur vom Initiator des Raums ausgeführt werden. Informiert den gekickten Benutzer über die Aktion.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung und die Daten des Kick-Requests.
+     */
     private synchronized void handleKickRequest(CallbackContext context){
         if (!context.conn().equals(initiator.getKey())){
             System.out.println("Nur der Initiator darf Benutzer kicken!");
@@ -275,6 +378,12 @@ public class AuctionRoomService {
         kickClient(data.username());
     }
 
+    /**
+     * Verarbeitet eine Anfrage, um einen Benutzer dauerhaft aus dem Auktionsraum zu verbannen (ban).
+     * Kann nur vom Initiator des Raums ausgeführt werden. Informiert den gebannten Benutzer über die Aktion.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung und die Daten des Ban-Requests.
+     */
     private synchronized void handleBanRequest(CallbackContext context){
         if (!context.conn().equals(initiator.getKey())){
             System.out.println("Nur der Initiator darf Benutzer bannen!");
@@ -292,6 +401,12 @@ public class AuctionRoomService {
         banClient(data.username());
     }
 
+    /**
+     * Entfernt einen Benutzer aus dem Auktionsraum und informiert ihn über den Kick.
+     * Diese Methode wird intern aufgerufen, um die Logik des Kickens eines Benutzers zu handhaben.
+     *
+     * @param username Der Benutzername des zu kickenden Benutzers.
+     */
     private synchronized void kickClient(String username){
         if (initiator.getValue().getUsername().equals(username)){
             System.out.println("Der Initiator kann nicht gekicked werden!");
@@ -307,6 +422,12 @@ public class AuctionRoomService {
         }
     }
 
+    /**
+     * Verbannen eines Benutzers aus dem Auktionsraum und informiert ihn über das Ban.
+     * Diese Methode wird intern aufgerufen, um die Logik des Verbannens eines Benutzers zu handhaben.
+     *
+     * @param username Der Benutzername des zu bannenden Benutzers.
+     */
     private synchronized void banClient(String username){
         if (initiator.getValue().getUsername().equals(username)){
             System.out.println("Der Initiator kann nicht gebannt werden!");
@@ -323,6 +444,12 @@ public class AuctionRoomService {
         }
     }
 
+    /**
+     * Verarbeitet eine Anfrage zum Starten einer neuen Auktion im Auktionsraum.
+     * Überprüft, ob bereits eine Auktion läuft, und startet eine neue, wenn keine aktive Auktion vorhanden ist.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung und die Daten der Auktion.
+     */
     private synchronized void onStartAuctionRequest(CallbackContext context){
         boolean success = false;
 
@@ -341,6 +468,12 @@ public class AuctionRoomService {
         context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());
     }
 
+    /**
+     * Startet eine neue Auktion mit den gegebenen Auktionsinformationen.
+     * Initialisiert die Auktion und informiert alle Clients im Raum über den Start der Auktion.
+     *
+     * @param info Die Informationen der zu startenden Auktion.
+     */
     private synchronized void startAuction(AuctionInfo info){
         currentAuctionInfo = info;
         currentAuctionInfo.setBidData(null);
@@ -352,6 +485,10 @@ public class AuctionRoomService {
         sendChatMessageToClients(new ChatMessageResponseData("Eine Auktion wurde gestartet!", "SYSTEM", Helpers.getCurrentTime(), true, ""));
     }
 
+    /**
+     * Beendet die aktuelle Auktion, informiert alle Clients über das Ende und verarbeitet das Ergebnis der Auktion.
+     * Wird aufgerufen, wenn die Auktionszeit abgelaufen ist oder die Auktion manuell beendet wird.
+     */
     private synchronized void finishAuction(){
         String username = "";
         String bidInfo = " Kein Benutzer hat das Produkt ersteigert, da keine Gebote abgegeben wurden.";
@@ -371,6 +508,12 @@ public class AuctionRoomService {
         currentAuctionInfo = null;
     }
 
+    /**
+     * Verarbeitet eine Gebotsanfrage von einem Client.
+     * Überprüft die Gültigkeit des Gebots und aktualisiert die Auktionsdaten entsprechend.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung und die Daten des Gebots.
+     */
     private synchronized void onBidRequest(CallbackContext context){
         boolean success = false;
         AuctionRoomBidData data = null;
@@ -406,12 +549,24 @@ public class AuctionRoomService {
         }
     }
 
+    /**
+     * Sendet eine JSON-Nachricht an alle im Auktionsraum registrierten Clients.
+     * Wird verwendet, um Zustandsaktualisierungen oder Benachrichtigungen zu versenden.
+     *
+     * @param json Die zu sendende JSON-Nachricht.
+     */
     private synchronized void sendJsonToAllClients(String json){
         for (Map.Entry<WebSocket, ClientInfo> entry : registeredClients.entrySet()){
             entry.getKey().send(json);
         }
     }
 
+    /**
+     * Verarbeitet eine Anfrage, um Informationen über die aktuelle Auktion zu erhalten.
+     * Sendet die aktuellen Auktionsinformationen als Antwort zurück an den anfragenden Client.
+     *
+     * @param context Der Kontext der Anfrage, enthält Informationen über die anfragende Verbindung.
+     */
     private synchronized void onGetAuctionInfoRequest(CallbackContext context){
         JsonMessage msg = new JsonMessage(CallbackType.Client_Response.name(), currentAuctionInfo, AuctionInfo.class.getName());
         context.conn().send(msg.setResponseId(context.message().getMessageId()).toJson());

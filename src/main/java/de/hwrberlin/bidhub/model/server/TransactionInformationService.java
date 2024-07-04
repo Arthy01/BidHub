@@ -10,12 +10,26 @@ import de.hwrberlin.bidhub.model.shared.CallbackType;
 
 import java.util.ArrayList;
 
+/**
+ * Verwaltet Transaktionsinformationen und Anfragen dazu.
+ * Registriert Callbacks für Transaktionsanfragen und verarbeitet diese entsprechend.
+ */
 public class TransactionInformationService {
 
+    /**
+     * Erstellt eine neue Instanz von TransactionInformationService.
+     * Registriert einen Callback für das Ereignis, Transaktionsanfragen zu erhalten.
+     */
     public TransactionInformationService() {
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetTransactionRequest.name(), this::onGetTransactionRequest);
     }
 
+    /**
+     * Verarbeitet eingehende Anfragen für Transaktionsinformationen.
+     * Extrahiert die Daten aus der Anfrage, holt die entsprechenden Transaktionsdaten und sendet eine Antwort zurück.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält die Nachrichtendaten und Verbindungsinformationen.
+     */
     private void onGetTransactionRequest(CallbackContext context) {
         GetAllTransactionsRequestData data;
         try{

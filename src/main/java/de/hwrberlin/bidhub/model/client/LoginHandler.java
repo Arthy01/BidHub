@@ -10,7 +10,21 @@ import de.hwrberlin.bidhub.model.shared.NetworkResponse;
 import de.hwrberlin.bidhub.util.Helpers;
 import de.hwrberlin.bidhub.util.WaitForResponse;
 
+/**
+ * Handles the login process for clients.
+ * This class is responsible for validating user login credentials against the server.
+ */
 public class LoginHandler {
+    /**
+     * Validates the login credentials of a user.
+     * This method sends a login request to the server with the provided username and password.
+     * If the credentials are valid, it returns an {@link ApplicationClient} object representing the logged-in user.
+     * If the credentials are invalid or an error occurs, it returns null.
+     *
+     * @param username The username of the user trying to log in.
+     * @param password The password of the user trying to log in.
+     * @return An {@link ApplicationClient} object if login is successful; otherwise, null.
+     */
     public ApplicationClient validateLogin(String username, String password){
         if (username.isBlank() || password.isBlank()){
             return null;

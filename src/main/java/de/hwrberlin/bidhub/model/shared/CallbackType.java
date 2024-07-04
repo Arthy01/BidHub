@@ -1,5 +1,9 @@
 package de.hwrberlin.bidhub.model.shared;
 
+/**
+ * Definiert verschiedene Typen von Callbacks, die in der Anwendung verwendet werden, um die Kommunikation zwischen Client und Server zu steuern.
+ * Diese Enumerationswerte repräsentieren spezifische Aktionen oder Anfragen, die zwischen dem Client und dem Server ausgetauscht werden können.
+ */
 public enum CallbackType {
     Client_Response,
     Server_ValidateLogin,

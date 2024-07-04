@@ -16,17 +16,39 @@ import javafx.stage.Stage;
 
 import java.util.Arrays;
 
+/**
+ * Verwaltet Auktionsraum-Interaktionen für einen Client.
+ * Diese Klasse bietet Methoden zum Verwalten von Auktionsraumaktionen wie das Betreten und Verlassen eines Raums,
+ * das Senden von Chat-Nachrichten, das Starten einer Auktion und das Platzieren von Geboten.
+ */
 public class AuctionRoomHandler {
     private final String roomId;
 
+    /**
+     * Erstellt einen neuen AuctionRoomHandler für einen spezifischen Auktionsraum.
+     *
+     * @param roomId Die ID des Auktionsraums, mit dem dieser Handler interagieren wird.
+     */
     public AuctionRoomHandler(String roomId) {
         this.roomId = roomId;
     }
 
+    /**
+     * Gibt die ID des Auktionsraums zurück, mit dem dieser Handler interagiert.
+     *
+     * @return Die ID des Auktionsraums.
+     */
     public String getRoomId() {
         return roomId;
     }
 
+    /**
+     * Überprüft, ob der aktuelle Benutzer der Initiator des Auktionsraums ist.
+     * Sendet eine Anfrage an den Server und wartet auf die Antwort.
+     *
+     * @return true, wenn der Benutzer der Initiator ist, sonst false.
+     * @throws RuntimeException Wenn der Callback auf dem Server nicht registriert ist.
+     */
     public boolean getIsInitiator(){
         JsonMessage msg = new JsonMessage(CallbackType.Server_GetIsInitiator.name() + roomId);
         NetworkResponse response = new NetworkResponse();
@@ -45,6 +67,15 @@ public class AuctionRoomHandler {
         return successResponse.success();
     }
 
+    /**
+     * Ruft Informationen zum aktuellen Auktionsraum ab.
+     * Diese Methode sendet eine Anfrage an den Server, um Informationen über den aktuellen Auktionsraum zu erhalten,
+     * einschließlich der Liste der Teilnehmer und der Auktionsdetails. Bei Erfolg wird ein {@link AuctionRoomInfo}-Objekt zurückgegeben,
+     * das diese Informationen enthält. Bei einem Fehler wird eine RuntimeException ausgelöst.
+     *
+     * @return Ein {@link AuctionRoomInfo}-Objekt mit den Details des Auktionsraums.
+     * @throws RuntimeException Wenn der Callback auf dem Server nicht registriert ist oder ein Fehler beim Abrufen der Informationen auftritt.
+     */
     public AuctionRoomInfo getAuctionRoomInfo(){
         JsonMessage msg = new JsonMessage(CallbackType.Server_GetAuctionRoomInfo.name() + roomId);
         NetworkResponse response = new NetworkResponse();
@@ -63,6 +94,12 @@ public class AuctionRoomHandler {
         return roomInfo;
     }
 
+    /**
+     * Ruft Informationen zur aktuellen Auktion im Auktionsraum ab.
+     * Sendet eine Anfrage an den Server und wartet auf die Antwort, um die Auktionsdetails zu erhalten.
+     *
+     * @return Ein {@link AuctionInfo}-Objekt mit den Details der Auktion oder null, wenn keine Auktion aktiv ist.
+     */
     public AuctionInfo getAuctionInfo(){
         JsonMessage msg = new JsonMessage(CallbackType.Server_GetAuctionInfoRequest.name() + roomId);
         NetworkResponse response = new NetworkResponse();
@@ -80,6 +117,12 @@ public class AuctionRoomHandler {
         }
     }
 
+    /**
+     * Verlässt den aktuellen Auktionsraum und kehrt zum Dashboard zurück.
+     * Zeigt je nach Verlassensgrund eine entsprechende Nachricht in einem Popup an.
+     *
+     * @param reason Der Grund für das Verlassen des Auktionsraums.
+     */
     public void leaveRoom(LeaveRoomReason reason){
         ClientApplication.unregisterFromCurrentConnectedRoom();
         StageManager.setScene(FxmlFile.Dashboard, true);
@@ -104,6 +147,12 @@ public class AuctionRoomHandler {
         }
     }
 
+    /**
+     * Sendet eine Chat-Nachricht im Auktionsraum oder führt einen Chat-Befehl aus, wenn die Nachricht mit "/" beginnt.
+     *
+     * @param message Die zu sendende Nachricht oder der auszuführende Befehl.
+     * @return Eine leere Zeichenkette oder eine Fehlermeldung, wenn der Befehl nicht existiert.
+     */
     public String sendChatMessage(String message){
         if (message.startsWith("/")){
             return handleChatCommand(message);
@@ -118,6 +167,13 @@ public class AuctionRoomHandler {
         return "";
     }
 
+    /**
+     * Verarbeitet einen Chat-Befehl, der mit "/" beginnt.
+     * Unterstützt Befehle wie /pm für private Nachrichten, /kick zum Entfernen und /ban zum Verbannen von Benutzern.
+     *
+     * @param message Die Chat-Nachricht, die den Befehl enthält.
+     * @return Eine Bestätigung oder Fehlermeldung, abhängig vom Ergebnis der Befehlsausführung.
+     */
     private String handleChatCommand(String message){
         String[] parts = message.split(" ", 2);
         String command = parts[0];
@@ -130,6 +186,12 @@ public class AuctionRoomHandler {
         };
     }
 
+    /**
+     * Verarbeitet den Befehl für das Senden einer privaten Nachricht an einen anderen Benutzer im Auktionsraum.
+     *
+     * @param rawMessage Die gesamte Nachricht, die den Befehl und die Parameter enthält.
+     * @return Eine leere Zeichenkette oder eine Fehlermeldung, wenn die Parameter ungültig sind.
+     */
     private String handlePrivateMessageCommand(String rawMessage){
         String recipient;
         String message;
@@ -162,6 +224,13 @@ public class AuctionRoomHandler {
         return "";
     }
 
+    /**
+     * Verarbeitet den Befehl zum Entfernen (Kicken) eines Benutzers aus dem Auktionsraum.
+     * Nur der Initiator des Raums kann diesen Befehl ausführen.
+     *
+     * @param message Die Nachricht, die den Befehl und den Benutzernamen des zu entfernenden Benutzers enthält.
+     * @return Eine leere Zeichenkette oder eine Fehlermeldung, wenn der Benutzer nicht berechtigt ist oder der Zielbenutzer nicht gefunden wurde.
+     */
     private String handleKickClient(String message){
         if (!getIsInitiator())
             return "Du bist nicht berechtigt einen Benutzer zu kicken!";
@@ -196,6 +265,13 @@ public class AuctionRoomHandler {
         return "";
     }
 
+    /**
+     * Verarbeitet den Befehl zum Verbannen eines Benutzers aus dem Auktionsraum.
+     * Nur der Initiator des Raums kann diesen Befehl ausführen.
+     *
+     * @param message Die Nachricht, die den Befehl und den Benutzernamen des zu verbannenden Benutzers enthält.
+     * @return Eine leere Zeichenkette oder eine Fehlermeldung, wenn der Benutzer nicht berechtigt ist oder der Zielbenutzer nicht gefunden wurde.
+     */
     private String handleBanClient(String message){
         if (!getIsInitiator())
             return "Du bist nicht berechtigt einen Benutzer zu bannen!";
@@ -230,6 +306,13 @@ public class AuctionRoomHandler {
         return "";
     }
 
+    /**
+     * Startet eine Auktion im Auktionsraum.
+     * Sendet eine Anfrage an den Server, um die Auktion mit den angegebenen Details zu starten.
+     *
+     * @param auctionInfo Die Informationen zur zu startenden Auktion.
+     * @throws RuntimeException Wenn ein Fehler beim Konvertieren der Antwort auftritt.
+     */
     public void startAuction(AuctionInfo auctionInfo){
         JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomStartAuction.name() + roomId, auctionInfo, AuctionInfo.class.getName());
         NetworkResponse response = new NetworkResponse();
@@ -248,6 +331,14 @@ public class AuctionRoomHandler {
         System.out.println("Konnte Auktion gestartet werden: " + data.success());
     }
 
+    /**
+     * Platziert ein Gebot in der aktuellen Auktion des Auktionsraums.
+     * Sendet eine Anfrage an den Server, um das Gebot zu platzieren, und wartet auf die Antwort.
+     *
+     * @param bid Der Betrag des Gebots.
+     * @return true, wenn das Gebot erfolgreich platziert wurde, sonst false.
+     * @throws RuntimeException Wenn ein Fehler beim Konvertieren der Antwort auftritt.
+     */
     public boolean placeBid(float bid){
         JsonMessage msg = new JsonMessage(CallbackType.Server_AuctionRoomOnBidRequest.name() + roomId, new AuctionRoomBidData(bid, ClientApplication.getApplicationClient()), AuctionRoomBidData.class.getName());
         NetworkResponse response = new NetworkResponse();

@@ -8,8 +8,8 @@ import java.net.URL;
 import java.util.HashMap;
 
 /**
- * Abstract class providing references to various FXML file paths used in the application.
- * Contains a mapping of FxmlFile enum values to their corresponding FXML file paths.
+ * Abstrakte Klasse, die Referenzen zu verschiedenen FXML-Dateipfaden in der Anwendung bereitstellt.
+ * Enthält eine Zuordnung von FxmlFile-Enum-Werten zu ihren entsprechenden FXML-Dateipfaden.
  */
 public abstract class FxmlRef {
     private static final HashMap<FxmlFile, String> paths = new HashMap<>() {
@@ -31,15 +31,20 @@ public abstract class FxmlRef {
     };
 
     /**
-     * Retrieves the FXML file path for the given FxmlFile enum value.
-     *
-     * @param fxml The FxmlFile enum value representing the desired FXML file.
-     * @return The corresponding FXML file path.
+     * Abstrakte Klasse, die Referenzen zu verschiedenen FXML-Dateipfaden in der Anwendung bereitstellt.
+     * Enthält eine Zuordnung von FxmlFile-Enum-Werten zu ihren entsprechenden FXML-Dateipfaden.
      */
     public static URL Get(FxmlFile fxml) {
         return Resources.getURL(paths.get(fxml));
     }
 
+    /**
+     * Erstellt eine Instanz des FXML-Controllers und des zugehörigen Nodes basierend auf dem gegebenen FxmlFile-Enum-Wert.
+     * Diese Methode lädt die FXML-Datei, instanziiert den Controller und gibt beides in einem Pair zurück.
+     *
+     * @param fxml Der FxmlFile-Enum-Wert, der die gewünschte FXML-Datei repräsentiert.
+     * @return Ein Pair, das den geladenen Node und den Controller enthält. Gibt {@code null} zurück, wenn ein Fehler auftritt.
+     */
     public static <T> Pair<Node, T> GetInstance(FxmlFile fxml) {
         FXMLLoader loader = new FXMLLoader(Get(fxml));
         try {

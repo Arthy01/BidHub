@@ -10,7 +10,19 @@ import java.util.ArrayList;
 
 import static java.sql.DriverManager.getConnection;
 
+/**
+ * Diese Klasse bietet Zugriffsmethoden für die Verwaltung von Transaktionsdaten in der Datenbank.
+ * Sie ermöglicht das Abrufen aller Transaktionsinformationen für einen bestimmten Benutzer.
+ */
 public class TransactionDAO {
+    /**
+     * Ruft alle Transaktionsinformationen für einen gegebenen Benutzer ab.
+     * Diese Methode gibt eine Liste von {@link TransactionData} Objekten zurück, die die Transaktionsdaten enthalten.
+     *
+     * @param userId Die ID des Benutzers, für den die Transaktionsinformationen abgerufen werden sollen.
+     * @return Eine Liste von {@link TransactionData} Objekten, die die Transaktionsinformationen enthalten.
+     *         Bei einem Fehler oder wenn keine Daten gefunden werden, wird eine leere Liste zurückgegeben.
+     */
     public static ArrayList<TransactionData> getAllTransactionInformation(long userId) {
         String query = "SELECT tr.Seller, tr.Sale_Price, li.Username As Seller_Username, pr.Product_Name , li_.Username As Buyer_Username " +
                 "FROM Transactions tr " +

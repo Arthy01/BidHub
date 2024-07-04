@@ -10,12 +10,26 @@ import de.hwrberlin.bidhub.json.dataTypes.UserInformationUpdateRequestData;
 import de.hwrberlin.bidhub.model.shared.CallbackType;
 import de.hwrberlin.bidhub.model.shared.UserInformation;
 
+/**
+ * Verwaltet Benutzerinformationen und stellt Dienste für das Abrufen und Aktualisieren dieser Informationen bereit.
+ * Registriert Callbacks für entsprechende Anfragen vom Client.
+ */
 public class UserInformationService {
+    /**
+     * Initialisiert eine neue Instanz des UserInformationService.
+     * Registriert Callbacks für das Abrufen und Aktualisieren von Benutzerinformationen.
+     */
     public UserInformationService(){
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_GetUserInformationRequest.name(), this::OnGetUserInformationRequest);
         ServerApplication.getSocketManager().registerCallback(CallbackType.Server_UpdateUserInformationRequest.name(), this::OnUpdateUserInformationRequest);
     }
 
+    /**
+     * Verarbeitet Anfragen zum Abrufen von Benutzerinformationen.
+     * Extrahiert die Anfragedaten und sendet die Benutzerinformationen als Antwort zurück.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält die Nachrichtendaten und Verbindungsinformationen.
+     */
     private void OnGetUserInformationRequest(CallbackContext context){
         UserInformationRequestData data;
         try {
@@ -32,6 +46,13 @@ public class UserInformationService {
         context.conn().send(new JsonMessage(CallbackType.Client_Response.name(), responseData, UserInformationResponseData.class.getName()).setResponseId(context.message().getMessageId()).toJson());
     }
 
+    /**
+     * Verarbeitet Anfragen zum Aktualisieren von Benutzerinformationen.
+     * Überprüft die Gültigkeit der Anfragedaten und führt bei Erfolg die Aktualisierung durch.
+     * Sendet eine Antwort zurück, die den Erfolg der Operation anzeigt.
+     *
+     * @param context Der Kontext der Callback-Anfrage, enthält die Nachrichtendaten und Verbindungsinformationen.
+     */
     private void OnUpdateUserInformationRequest(CallbackContext context){
         UserInformationUpdateRequestData data;
         try {

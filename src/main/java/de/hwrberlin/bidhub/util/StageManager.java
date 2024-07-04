@@ -14,14 +14,21 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Abstract class managing stages and popups in the application.
- * Provides methods for initializing the main stage, creating and managing popups,
- * setting scenes, creating new stages, and setting titles for stages.
+ * Abstrakte Klasse zur Verwaltung von Stages und Popups in der Anwendung.
+ * Bietet Methoden zur Initialisierung der Hauptbühne, Erstellung und Verwaltung von Popups,
+ * Festlegen von Szenen, Erstellen neuer Stages und Festlegen von Titeln für Stages.
  */
 public abstract class StageManager {
     private static final String BIDHUB_ICON = "icons/BidHub_Icon.png";
     private static Stage mainStage;
 
+    /**
+     * Initialisiert die Hauptbühne der Anwendung mit einer gegebenen Szene und Titel.
+     * Setzt auch den CloseRequest-Handler, der bei Schließanfragen aufgerufen wird.
+     *
+     * @param startStage Die Startbühne der Anwendung.
+     * @param title Der Titel der Startbühne.
+     */
     public static void initialize(Stage startStage, String title) {
         mainStage = startStage;
 
@@ -37,12 +44,14 @@ public abstract class StageManager {
     }
 
     /**
-     * Sets the scene of a stage using the provided FXML file.
+     * Setzt die Szene einer Bühne unter Verwendung der bereitgestellten FXML-Datei.
+     * Ermöglicht das Festlegen, ob die Bühne in der Größe veränderbar sein soll.
      *
-     * @param stage The stage for which to set the scene.
-     * @param sceneFxmlFile The FxmlFile enum representing the desired scene.
-     * @param <T> The type of the controller associated with the scene.
-     * @return The controller instance associated with the scene.
+     * @param stage Die Bühne, für die die Szene gesetzt wird.
+     * @param sceneFxmlFile Die FxmlFile-Enum, die die gewünschte Szene repräsentiert.
+     * @param resizable Gibt an, ob die Bühne in der Größe veränderbar sein soll.
+     * @param <T> Der Typ des Controllers, der mit der Szene verbunden ist.
+     * @return Die Controller-Instanz, die mit der Szene verbunden ist.
      */
     public static <T> T setScene(Stage stage, FxmlFile sceneFxmlFile, boolean resizable) {
         try {
@@ -77,16 +86,26 @@ public abstract class StageManager {
         }
     }
 
+    /**
+     * Setzt die Szene der Hauptbühne unter Verwendung der bereitgestellten FXML-Datei.
+     * Ermöglicht das Festlegen, ob die Bühne in der Größe veränderbar sein soll.
+     *
+     * @param sceneFxmlFile Die FxmlFile-Enum, die die gewünschte Szene repräsentiert.
+     * @param resizable Gibt an, ob die Bühne in der Größe veränderbar sein soll.
+     * @param <T> Der Typ des Controllers, der mit der Szene verbunden ist.
+     * @return Die Controller-Instanz, die mit der Szene verbunden ist.
+     */
     public static <T> T setScene(FxmlFile sceneFxmlFile, boolean resizable) {
         return setScene(mainStage, sceneFxmlFile, resizable);
     }
 
 
     /**
-     * Creates a new stage with the specified scene and title, closing the main stage.
+     * Erstellt eine neue Bühne mit der angegebenen Szene und dem Titel und schließt die Hauptbühne.
      *
-     * @param startingScene The FxmlFile enum representing the starting scene for the new stage.
-     * @param stageTitle The title of the new stage.
+     * @param startingScene Die FxmlFile-Enum, die die Startszene für die neue Bühne repräsentiert.
+     * @param stageTitle Der Titel der neuen Bühne.
+     * @param resizable Gibt an, ob die neue Bühne in der Größe veränderbar sein soll.
      */
     public static void createStage(FxmlFile startingScene, String stageTitle, boolean resizable) {
         Stage stage = new Stage();
@@ -102,6 +121,15 @@ public abstract class StageManager {
         mainStage.show();
     }
 
+    /**
+     * Erstellt ein neues Popup mit der angegebenen Szene und dem Titel.
+     * Das Popup wird modal in Bezug auf die Hauptbühne angezeigt.
+     *
+     * @param scene Die FxmlFile-Enum, die die Szene für das Popup repräsentiert.
+     * @param title Der Titel des Popups.
+     * @param <T> Der Typ des Controllers, der mit der Szene des Popups verbunden ist.
+     * @return Ein Paar aus dem Controller und der Bühne des Popups.
+     */
     public static <T> Pair<T, Stage> createPopup(FxmlFile scene, String title){
         Stage stage = new Stage();
 
@@ -119,9 +147,9 @@ public abstract class StageManager {
     }
 
     /**
-     * Sets the title of the main stage.
+     * Setzt den Titel der Hauptbühne.
      *
-     * @param title The new title for the main stage.
+     * @param title Der neue Titel für die Hauptbühne.
      */
     public static void setTitle(String title) {
         mainStage.setTitle("BidHub - " + title);

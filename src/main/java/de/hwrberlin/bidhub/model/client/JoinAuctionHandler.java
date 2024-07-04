@@ -17,7 +17,20 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Behandelt das Beitreten zu Auktionsräumen und die Validierung von Raum-Passwörtern.
+ * Diese Klasse bietet Methoden zum Beitreten zu Auktionsräumen, zum Abrufen verfügbarer Auktionsräume
+ * und zur Überprüfung von Passwörtern für Auktionsräume.
+ */
 public class JoinAuctionHandler {
+    /**
+     * Tritt einem Auktionsraum mit der angegebenen Raum-ID bei.
+     * Sendet eine Anfrage an den Server, um den aktuellen Client in den Auktionsraum zu registrieren.
+     * Bei Erfolg wird die Auktionsraumansicht geladen und initialisiert.
+     * Bei einem Fehler, z.B. wenn der Client gebannt ist, wird ein Popup mit einer Fehlermeldung angezeigt.
+     *
+     * @param roomId Die ID des Auktionsraums, dem beigetreten werden soll.
+     */
     public static void joinAuction(String roomId){
         NetworkResponse response = new NetworkResponse();
         JsonMessage msg = new JsonMessage(
@@ -49,6 +62,13 @@ public class JoinAuctionHandler {
         System.out.println("Auction Room erfolgreich beigetreten!");
     }
 
+    /**
+     * Ruft die verfügbaren Auktionsräume vom Server ab.
+     * Sendet eine Anfrage an den Server, um eine Liste aller verfügbaren Auktionsräume zu erhalten.
+     * Bei einem Fehler während der Anfrage wird eine RuntimeException ausgelöst.
+     *
+     * @return Eine Liste von {@link AuctionRoomInfo} Objekten, die Informationen über die verfügbaren Auktionsräume enthalten.
+     */
     public ArrayList<AuctionRoomInfo> getAvailableRooms(){
         NetworkResponse response = new NetworkResponse();
         JsonMessage msg = new JsonMessage(CallbackType.Server_GetAvailableRooms.name());
@@ -67,6 +87,15 @@ public class JoinAuctionHandler {
         return data.infos();
     }
 
+    /**
+     * Überprüft, ob das angegebene Passwort für den Auktionsraum gültig ist.
+     * Sendet eine Anfrage an den Server, um das Passwort für den angegebenen Auktionsraum zu validieren.
+     * Bei einem Fehler, z.B. wenn der Raum nicht existiert, wird false zurückgegeben.
+     *
+     * @param roomId Die ID des Auktionsraums, dessen Passwort validiert werden soll.
+     * @param password Das zu validierende Passwort.
+     * @return true, wenn das Passwort gültig ist, sonst false.
+     */
     public boolean validateRoomPassword(String roomId, String password){
         AuctionRoomPasswordValidationRequestData data = new AuctionRoomPasswordValidationRequestData(Helpers.hashPassword(password));
         NetworkResponse response = new NetworkResponse();
