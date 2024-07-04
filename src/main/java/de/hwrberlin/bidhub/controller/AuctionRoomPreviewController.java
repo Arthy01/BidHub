@@ -7,6 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
+/**
+ * Der Controller für die Vorschau eines Auktionsraums. Verwaltet die Anzeige der Raumdetails und die Beitrittsfunktion.
+ */
 public class AuctionRoomPreviewController{
     @FXML
     private Label fxId;
@@ -19,6 +22,11 @@ public class AuctionRoomPreviewController{
     @FXML
     private Button fxJoinRoom;
 
+    /**
+     * Initialisiert die Vorschau mit den Informationen des Auktionsraums.
+     *
+     * @param info Die Informationen des Auktionsraums.
+     */
     public void initialize(AuctionRoomInfo info){
         fxId.setText(info.getId());
         fxTitle.setText(info.getTitle());

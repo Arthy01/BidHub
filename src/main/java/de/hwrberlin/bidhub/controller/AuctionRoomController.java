@@ -20,7 +20,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
+/**
+ * Der Controller für den Auktionsraum. Verwaltet die Interaktionen und UI-Updates innerhalb eines Auktionsraums.
+ */
 public class AuctionRoomController {
     @FXML
     private Button fxProfile;
@@ -61,6 +63,11 @@ public class AuctionRoomController {
 
     private AuctionRoomHandler handler;
 
+    /**
+     * Initialisiert den Auktionsraum mit der angegebenen Raum-ID.
+     *
+     * @param roomId Die ID des Auktionsraums.
+     */
     public void initialize(String roomId) {
         handler = new AuctionRoomHandler(roomId);
 
@@ -78,6 +85,9 @@ public class AuctionRoomController {
         updateAuctionInfo();
     }
 
+    /**
+     * Registriert die erforderlichen Callback-Funktionen.
+     */
     private void registerCallbacks(){
         ClientApplication.getSocketManager().registerCallback(CallbackType.Client_OnRoomClosed.name(), this::onRoomClosed);
         ClientApplication.getSocketManager().registerCallback(CallbackType.Client_ReceiveChatMessage.name(), this::onChatMessageReceived);
@@ -87,6 +97,9 @@ public class AuctionRoomController {
         ClientApplication.getSocketManager().registerCallback(CallbackType.Client_OnBid.name(), this::onBidDataReceived);
     }
 
+    /**
+     * Entfernt die registrierten Callback-Funktionen.
+     */
     private void unregisterCallbacks(){
         ClientApplication.getSocketManager().unregisterCallback(CallbackType.Client_OnRoomClosed.name());
         ClientApplication.getSocketManager().unregisterCallback(CallbackType.Client_ReceiveChatMessage.name());
@@ -96,6 +109,9 @@ public class AuctionRoomController {
         ClientApplication.getSocketManager().unregisterCallback(CallbackType.Client_OnBid.name());
     }
 
+    /**
+     * Richtet die gemeinsamen UI-Komponenten für alle Benutzer ein.
+     */
     private void setupShared(){
         fxProfile.setTooltip(new Tooltip("Profil"));
         fxRoomInfo.setTooltip(new Tooltip("Raum Informationen"));
@@ -111,6 +127,11 @@ public class AuctionRoomController {
         fxRoomInfo.setOnAction(this::openAuctionRoomInfo);
     }
 
+    /**
+     * Öffnet die Informationen des Auktionsraums.
+     *
+     * @param actionEvent Das ActionEvent, das die Methode ausgelöst hat.
+     */
     private void openAuctionRoomInfo(ActionEvent actionEvent) {
         AuctionRoomInfo info = handler.getAuctionRoomInfo();
         if (info == null){
@@ -122,6 +143,9 @@ public class AuctionRoomController {
         controller.updateUI(info);
     }
 
+    /**
+     * Richtet die UI-Komponenten für den Initiator der Auktion ein.
+     */
     private void setupForInitiator(){
         fxBidBox.setManaged(false);
         fxBidBox.setVisible(false);
@@ -131,6 +155,9 @@ public class AuctionRoomController {
         fxStartAuction.setOnAction(this::onStartAuctionButtonPressed);
     }
 
+    /**
+     * Richtet die UI-Komponenten für einen Teilnehmer der Auktion ein.
+     */
     private void setupForParticipant(){
         fxStartAuction.setManaged(false);
         fxStartAuction.setVisible(false);
@@ -139,6 +166,11 @@ public class AuctionRoomController {
         fxBidInput.setOnKeyPressed(this::onBidInputKeyPressed);
     }
 
+    /**
+     * Behandelt das Drücken einer Taste im Chat-Eingabefeld.
+     *
+     * @param keyEvent Das KeyEvent, das die Methode ausgelöst hat.
+     */
     private void onChatInputKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER && !fxChatInput.getText().isBlank()) {
@@ -150,6 +182,11 @@ public class AuctionRoomController {
         }
     }
 
+    /**
+     * Behandelt das Drücken einer Taste im Gebots-Eingabefeld.
+     *
+     * @param keyEvent Das KeyEvent, das die Methode ausgelöst hat.
+     */
     private void onBidInputKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER) {
@@ -157,6 +194,11 @@ public class AuctionRoomController {
         }
     }
 
+    /**
+     * Behandelt den Empfang einer Chat-Nachricht.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onChatMessageReceived(JsonMessage msg){
         Platform.runLater(() -> {
             ChatMessageResponseData data;
@@ -177,6 +219,12 @@ public class AuctionRoomController {
         System.out.println("Chat Nachricht im Auction Room " + handler.getRoomId() + " empfangen.");
     }
 
+    /**
+     * Erstellt eine Chat-Nachricht im UI.
+     *
+     * @param finalMessage Die anzuzeigende Nachricht.
+     * @param important Gibt an, ob die Nachricht wichtig ist.
+     */
     public void instantiateChatMessage(String finalMessage, boolean important){
         Pair<Node, ChatMessageController> instance = FxmlRef.GetInstance(FxmlFile.ChatMessage);
 
@@ -186,6 +234,9 @@ public class AuctionRoomController {
         Platform.runLater(() -> fxChatScrollPane.setVvalue(1));
     }
 
+    /**
+     * Aktualisiert die Informationen des Auktionsraums.
+     */
     private void updateRoomInfo(){
         AuctionRoomInfo info = handler.getAuctionRoomInfo();
 
@@ -196,6 +247,12 @@ public class AuctionRoomController {
         System.out.println("Raum info für Auction Room " + info.getId() + " aktualisiert.");
     }
 
+
+    /**
+     * Behandelt das Drücken des Gebots-Buttons.
+     *
+     * @param event Das ActionEvent, das die Methode ausgelöst hat.
+     */
     private void onBidInputButtonPressed(ActionEvent event){
         float bid;
         try{
@@ -215,11 +272,22 @@ public class AuctionRoomController {
         }
     }
 
+    /**
+     * Behandelt das Drücken des Verlassen-Buttons.
+     *
+     * @param event Das ActionEvent, das die Methode ausgelöst hat.
+     */
     private void onLeaveRoomButtonPressed(ActionEvent event){
         unregisterCallbacks();
         handler.leaveRoom(LeaveRoomReason.Self);
     }
 
+
+    /**
+     * Behandelt das Schließen des Raums.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onRoomClosed(JsonMessage msg){
         if (ClientApplication.getApplicationClient().getCurrentConnectedRoom().isBlank())
             return;
@@ -244,15 +312,30 @@ public class AuctionRoomController {
         Platform.runLater(() -> handler.leaveRoom(finalReason));
     }
 
+    /**
+     * Behandelt das Drücken des Start-Auktion-Buttons.
+     *
+     * @param event Das ActionEvent, das die Methode ausgelöst hat.
+     */
     private void onStartAuctionButtonPressed(ActionEvent event){
         Pair<StartAuctionPopupController, Stage> popup = StageManager.createPopup(FxmlFile.StartAuctionPopup, "Auktion starten");
         popup.getKey().initialize(this, popup.getValue());
     }
 
+    /**
+     * Startet die Auktion mit den angegebenen Informationen.
+     *
+     * @param auctionInfo Die Informationen der Auktion.
+     */
     public void startAuction(AuctionInfo auctionInfo){
         handler.startAuction(auctionInfo);
     }
 
+    /**
+     * Behandelt das Tick-Ereignis.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onTick(JsonMessage msg){
         AuctionRoomTickData data;
         try {
@@ -265,6 +348,11 @@ public class AuctionRoomController {
         Platform.runLater(() -> updateRemainingTime(data.remainingSeconds()));
     }
 
+    /**
+     * Behandelt das Tick-Ereignis.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onAuctionStarted(JsonMessage msg){
         AuctionInfo auctionInfo;
         try {
@@ -280,6 +368,9 @@ public class AuctionRoomController {
         });
     }
 
+    /**
+     * Aktualisiert die Informationen der Auktion.
+     */
     private void updateAuctionInfo(){
         AuctionInfo info = handler.getAuctionInfo();
 
@@ -289,6 +380,11 @@ public class AuctionRoomController {
         updateAuctionInfo(info);
     }
 
+    /**
+     * Aktualisiert die Informationen der Auktion mit den angegebenen Daten.
+     *
+     * @param auctionInfo Die Informationen der Auktion.
+     */
     private void updateAuctionInfo(AuctionInfo auctionInfo){
         fxProductTitle.setText(auctionInfo.getProduct().title());
         fxProductDescription.setText(auctionInfo.getProduct().description());
@@ -299,6 +395,11 @@ public class AuctionRoomController {
         updateRemainingTime(auctionInfo.getRemainingSeconds());
     }
 
+    /**
+     * Behandelt das Ende der Auktion.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onAuctionFinished(JsonMessage msg){
         Platform.runLater(() -> {
             updateRemainingTime(0);
@@ -306,6 +407,11 @@ public class AuctionRoomController {
         });
     }
 
+    /**
+     * Aktualisiert die verbleibende Zeit der Auktion.
+     *
+     * @param remainingSeconds Die verbleibenden Sekunden.
+     */
     private void updateRemainingTime(int remainingSeconds){
         int minutes = remainingSeconds / 60;
         int seconds = remainingSeconds % 60;
@@ -321,6 +427,11 @@ public class AuctionRoomController {
         fxRemainingTime.setText(minutes + minutesStr + seconds + secondsStr);
     }
 
+    /**
+     * Behandelt den Empfang von Gebotsdaten.
+     *
+     * @param msg Die empfangene Nachricht.
+     */
     private void onBidDataReceived(JsonMessage msg){
         AuctionRoomBidData data;
         try {
@@ -335,6 +446,11 @@ public class AuctionRoomController {
         });
     }
 
+    /**
+     * Aktualisiert das aktuelle Gebot.
+     *
+     * @param bidData Die Gebotsdaten.
+     */
     private void updateCurrentBid(AuctionRoomBidData bidData){
         if (bidData == null)
             fxCurrentBid.setText("/");

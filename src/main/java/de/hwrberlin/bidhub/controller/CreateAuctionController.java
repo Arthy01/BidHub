@@ -12,6 +12,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Der Controller für das Erstellen einer Auktion. Verwaltet die Eingabefelder und Aktionen zum Erstellen einer neuen Auktion.
+ */
 public class CreateAuctionController implements Initializable {
     @FXML
     private ChoiceBox<String> fxVisibility;
@@ -26,12 +29,21 @@ public class CreateAuctionController implements Initializable {
 
     private final CreateAuctionHandler handler = new CreateAuctionHandler();
 
+    /**
+     * Initialisiert die Ansicht und setzt die erforderlichen Event-Handler.
+     *
+     * @param url Die URL der FXML-Ressource.
+     * @param resourceBundle Das Ressourcenpaket.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupVisibilityChoiceBox();
         fxCreateAuction.setOnAction(this::onCreateAuctionButtonPressed);
     }
 
+    /**
+     * Richtet die Auswahlbox für die Sichtbarkeit der Auktion ein.
+     */
     private void setupVisibilityChoiceBox(){
         fxVisibility.getItems().addAll("Öffentlich", "Privat");
         fxVisibility.getSelectionModel().selectFirst();
@@ -48,11 +60,21 @@ public class CreateAuctionController implements Initializable {
         changeVisibility(false);
     }
 
+    /**
+     * Ändert die Sichtbarkeit des Passwortfelds basierend auf der ausgewählten Sichtbarkeit.
+     *
+     * @param isPrivate Gibt an, ob die Auktion privat ist.
+     */
     private void changeVisibility(boolean isPrivate){
         fxPassword.setVisible(isPrivate);
         fxPassword.setText("");
     }
 
+    /**
+     * Behandelt das Drücken des Erstellen-Buttons und erstellt eine neue Auktion.
+     *
+     * @param event Das ActionEvent, das die Methode ausgelöst hat.
+     */
     private void onCreateAuctionButtonPressed(ActionEvent event){
         handler.createAuction(fxTitle.getText(), fxDescription.getText(), fxPassword.getText());
     }
