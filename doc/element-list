@@ -1,0 +1,10 @@
+module:de.hwrberlin.bidhub
+de.hwrberlin.bidhub
+de.hwrberlin.bidhub.controller
+de.hwrberlin.bidhub.exceptions
+de.hwrberlin.bidhub.json
+de.hwrberlin.bidhub.json.dataTypes
+de.hwrberlin.bidhub.model.client
+de.hwrberlin.bidhub.model.server
+de.hwrberlin.bidhub.model.shared
+de.hwrberlin.bidhub.util

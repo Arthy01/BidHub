@@ -15,6 +15,10 @@ import javafx.scene.input.KeyEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Der LoginController ist für die Handhabung der Benutzeroberfläche zum Anmelden
+ * zuständig.
+ */
 public class LoginController implements Initializable {
     @FXML
     private TextField fxUsername;
@@ -29,6 +33,12 @@ public class LoginController implements Initializable {
 
     private final LoginHandler handler = new LoginHandler();
 
+    /**
+     * Initialisiert den Controller und richtet die Aktionen für die Anmelde- und Registrierungselemente ein.
+     *
+     * @param url die URL zur Initialisierung
+     * @param resourceBundle das zu ladende Ressourcenbündel
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fxLogin.setOnAction(this::onLoginButtonPressed);
@@ -36,6 +46,11 @@ public class LoginController implements Initializable {
         fxRegister.setOnAction(this::onRegisterLinkPressed);
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer auf den Anmeldebutton klickt.
+     *
+     * @param event das auslösende Ereignis
+     */
     private void onLoginButtonPressed(ActionEvent event) {
         ApplicationClient client = handler.validateLogin(fxUsername.getText(), fxPassword.getText());
         if (client != null){
@@ -47,6 +62,11 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer eine Taste im Passwortfeld drückt.
+     *
+     * @param keyEvent das auslösende Tastaturereignis
+     */
     private void onPasswordKeyPressed(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         if (keyCode == KeyCode.ENTER) {
@@ -54,11 +74,21 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * Führt den Login durch und wechselt zur Dashboard-Ansicht.
+     *
+     * @param client der angemeldete Benutzer
+     */
     private void login(ApplicationClient client){
         ClientApplication.setApplicationClient(client);
         StageManager.createStage(FxmlFile.Dashboard, "Dashboard", true);
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer auf den Registrierungslink klickt.
+     *
+     * @param event das auslösende Ereignis
+     */
     private void onRegisterLinkPressed(ActionEvent event) {
         StageManager.createStage(FxmlFile.Register, "Registrieren",true);
     }

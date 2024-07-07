@@ -13,6 +13,10 @@ import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 
+/**
+ * Der OverviewController ist für die Handhabung der Benutzeroberfläche zur Anzeige
+ * von Kauf- und Verkaufsübersichten zuständig.
+ */
 public class OverviewController {
 
     @FXML
@@ -35,7 +39,10 @@ public class OverviewController {
 
     private final OverviewModel handler = new OverviewModel();
 
-
+    /**
+     * Initialisiert die Controller-Klasse. Diese Methode wird automatisch aufgerufen,
+     * nachdem die FXML-Datei geladen wurde.
+     */
     @FXML
     public void initialize() {
         adjustColumnWidths(purchasesTable);
@@ -43,6 +50,9 @@ public class OverviewController {
         setupTable();
     }
 
+    /**
+     * Richtet die Tabellen zur Anzeige der Transaktionsdaten ein.
+     */
     private void setupTable() {
         purchasesProductColumn.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().productName()));
         purchasesPriceColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().price()));
@@ -55,6 +65,9 @@ public class OverviewController {
         loadTransactions();
     }
 
+    /**
+     * Lädt die Transaktionsdaten und ordnet sie den entsprechenden Tabellen zu.
+     */
     private void loadTransactions() {
         ArrayList<TransactionData> transactions = handler.getTransactionData();
 
@@ -80,7 +93,11 @@ public class OverviewController {
         salesTable.setItems(observableTransactions_sales);
     }
 
-
+    /**
+     * Passt die Spaltenbreiten der angegebenen Tabelle gleichmäßig an.
+     *
+     * @param tableView die Tabelle, deren Spaltenbreiten angepasst werden sollen
+     */
     private void adjustColumnWidths(TableView<?> tableView) {
         ObservableList<? extends TableColumn<?, ?>> columns = tableView.getColumns();
         columns.forEach(column -> column.prefWidthProperty().bind(tableView.widthProperty().divide(columns.size())));

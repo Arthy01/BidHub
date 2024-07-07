@@ -14,6 +14,10 @@ import javafx.stage.Stage;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Der StartAuctionPopupController ist für die Handhabung des Popups zum Starten einer neuen Auktion verantwortlich.
+ * Er ermöglicht dem Benutzer die Eingabe der Auktionsdetails und validiert diese.
+ */
 public class StartAuctionPopupController {
     @FXML
     private TextField fxTitle;
@@ -35,6 +39,12 @@ public class StartAuctionPopupController {
     private AuctionRoomController auctionRoomController;
     private Stage stage;
 
+    /**
+     * Initialisiert den Controller mit den erforderlichen Abhängigkeiten.
+     *
+     * @param roomController der Controller des Auktionsraums
+     * @param stage die aktuelle Stage des Popups
+     */
     public void initialize(AuctionRoomController roomController, Stage stage){
         auctionRoomController = roomController;
         this.stage = stage;
@@ -43,11 +53,19 @@ public class StartAuctionPopupController {
         setupTimeUnitChoiceBox();
     }
 
+    /**
+     * Richtet die Auswahlbox für die Zeiteinheit ein.
+     */
     private void setupTimeUnitChoiceBox(){
         fxTimeUnit.getItems().addAll("Minuten", "Sekunden");
         fxTimeUnit.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer auf den Start-Button klickt.
+     *
+     * @param event das auslösende Ereignis
+     */
     private void onStartButtonPressed(ActionEvent event){
         AuctionInfo info = validateInputs();
 
@@ -61,10 +79,21 @@ public class StartAuctionPopupController {
         stage.close();
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer auf den Abbrechen-Button klickt.
+     *
+     * @param event das auslösende Ereignis
+     */
     private void onCancelButtonPressed(ActionEvent event){
         stage.close();
     }
 
+    /**
+     * Validiert die Eingaben des Benutzers und erstellt ein AuctionInfo-Objekt,
+     * wenn die Eingaben gültig sind.
+     *
+     * @return ein AuctionInfo-Objekt bei gültigen Eingaben, sonst null
+     */
     private AuctionInfo validateInputs(){
         String title = fxTitle.getText();
 

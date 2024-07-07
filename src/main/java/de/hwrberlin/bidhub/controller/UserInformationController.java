@@ -23,6 +23,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+/**
+ * Der UserInformationController ist für die Handhabung der Benutzeroberfläche zur Anzeige
+ * und Bearbeitung der Benutzerinformationen zuständig.
+ */
 public class UserInformationController {
     @FXML
     private TextField fxUsername;
@@ -54,6 +58,11 @@ public class UserInformationController {
     private Stage stage;
     private final UserInformationHandler handler = new UserInformationHandler();
 
+    /**
+     * Initialisiert den Controller mit der aktuellen Stage.
+     *
+     * @param stage die aktuelle Stage
+     */
     public void setup(Stage stage){
         this.stage = stage;
 
@@ -63,6 +72,9 @@ public class UserInformationController {
         fillCurrentInformations();
     }
 
+    /**
+     * Füllt die aktuellen Benutzerdaten in die Eingabefelder.
+     */
     private void fillCurrentInformations(){
         UserInformation information = handler.getUserInformation();
         if (information == null)
@@ -80,6 +92,9 @@ public class UserInformationController {
         fxCity.setText(information.city());
     }
 
+    /**
+     * Wird aufgerufen, wenn der Benutzer auf den Speichern-Button klickt.
+     */
     private void onSaveButtonPressed(){
         if (!validateInputs()){
             fxErrorMsg.setVisible(true);
@@ -108,6 +123,11 @@ public class UserInformationController {
         this.stage.close();
     }
 
+    /**
+     * Validiert die Benutzereingaben.
+     *
+     * @return true, wenn die Eingaben gültig sind, sonst false
+     */
     private boolean validateInputs(){
         if (!Helpers.isEmailValid(fxEmail.getText()))
             return false;
